@@ -18,8 +18,7 @@ export const TicketTable: React.FC = () => {
 
   const records = data?.result as Record<string, TicketType>;
   const tickets = Object.values(records ?? {});
-  tickets?.sort((a, b) => a.txTime - b.txTime);
-  console.log(tickets, pools);
+
   const poolDetails = pools?.reduce(
     (acc, pool) => {
       acc[pool.poolCode] = pool;
@@ -27,8 +26,28 @@ export const TicketTable: React.FC = () => {
     },
     {} as Record<string, PoolType>,
   );
+  console.log(tickets);
+  const mergeTickets = tickets.reduce(
+    (acc, ticket) => {
+      console.log("acc", acc);
+      const key = ticket.currentPhase + ticket.poolCode;
+      if (acc[key]) {
+        console.log("concat", ticket.tickets);
+        acc[key].tickets = acc[key].tickets.concat(ticket.tickets);
+      } else {
+        acc[key] = ticket;
+      }
+      return acc;
+    },
+    {} as Record<string, TicketType>,
+  );
 
-  console.log(poolDetails);
+  console.log(mergeTickets);
+
+  const sortedTickets = Object.values(mergeTickets).sort((a, b) =>
+    a.currentPhase.slice(-14) > b.currentPhase.slice(-14) ? 1 : -1,
+  );
+  console.log(sortedTickets);
   return (
     <>
       <TableContainer>
@@ -43,7 +62,7 @@ export const TicketTable: React.FC = () => {
           </Thead>
           <Tbody>
             {poolDetails &&
-              tickets.map((ticket) => {
+              sortedTickets.map((ticket) => {
                 return (
                   <Tr key={ticket.txHash}>
                     <Td>{ticket.currentPhase?.slice(-14)}</Td>

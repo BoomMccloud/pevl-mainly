@@ -21,7 +21,7 @@ const MainPane: FC = () => {
       border={colorMode === "light" ? "none" : "1px solid rgba(152, 161, 192, 0.24)"}
     >
       <Heading as="h2" fontSize={"2rem"} mb={10}>
-        Daily Lotto
+        PEVL Games
       </Heading>
       <Prize />
 

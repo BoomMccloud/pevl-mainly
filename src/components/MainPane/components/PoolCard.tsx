@@ -127,19 +127,20 @@ export const PoolCard = ({ pool }: PoolStateType) => {
   return (
     <Card maxW="sm">
       <CardBody>
-        <Stack mt="6" spacing="3">
+        <Stack mt="6" spacing="3" alignItems="stretch">
           <HStack justifyContent="center">
             <Heading size="md">{name}</Heading>
             <Tag colorScheme={difficulty === "MATCH" ? "red" : "green"}>{difficulty}</Tag>
           </HStack>
 
-          <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
+          <Text>Choose the number to tickets to buy</Text>
 
-          <HStack maxW="200px" mb={2}>
+          <HStack mb={2}>
             <Button {...dec}>-</Button>
             <Input {...input} style={{ textAlign: "center" }} />
             <Button {...inc}>+</Button>
           </HStack>
+          <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
           <Button onClick={handleTransfer} isLoading={isLoading || isPending}>
             Buy tickets
           </Button>

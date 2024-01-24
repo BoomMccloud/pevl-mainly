@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { TabList, TabPanel, TabPanels } from "@chakra-ui/react";

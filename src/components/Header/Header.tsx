@@ -28,6 +28,11 @@ export const routes = [
     path: "/referral",
     icon: <EmailIcon />,
   },
+  {
+    title: "Debugger",
+    path: "/debugger",
+    icon: <EmailIcon />,
+  },
 ];
 
 const Header: FC = () => {

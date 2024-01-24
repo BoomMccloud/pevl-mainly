@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";

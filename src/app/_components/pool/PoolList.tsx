@@ -10,7 +10,7 @@ import {
   Heading,
   Image,
   Stack,
-  StackDivider,
+  StackDivider, Stat, StatArrow, StatHelpText, StatLabel, StatNumber,
   Tag,
   Text,
   Tooltip,
@@ -62,6 +62,13 @@ function PoolList() {
                       </Tag>
                     </Tooltip>
                   </Text>
+                  <Stat>
+                    <StatLabel>Prize</StatLabel>
+                    <StatNumber>{poolState.pool.prize ?? 0} ETH</StatNumber>
+                    <StatHelpText>
+                      <StatArrow type={"increase"} />
+                    </StatHelpText>
+                  </Stat>
                 </Box>
                 <Box>
                   {poolState.currentPhase && (

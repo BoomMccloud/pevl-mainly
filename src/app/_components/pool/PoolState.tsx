@@ -32,15 +32,8 @@ function PoolState(props: { title: string; pool: PoolType; phaseResult: PhaseRes
     <>
       <StatGroup>
         <Stat>
-          <StatLabel>Prize</StatLabel>
-          <StatNumber>${pool.prize ?? 0} </StatNumber>
-          <StatHelpText>
-            <StatArrow type={"increase"} />
-          </StatHelpText>
-        </Stat>
-        <Stat>
           <StatLabel>Collected Fees</StatLabel>
-          <StatNumber>${(phaseResult?.ticketCount ?? 0) * pool.price} </StatNumber>
+          <StatNumber>{(phaseResult?.ticketCount ?? 0) * pool.price} ETH</StatNumber>
           <StatHelpText>
             <StatArrow type={"increase"} />
           </StatHelpText>

@@ -45,7 +45,7 @@ function Countdown(props: { targetDate: Date }) {
   }
 
   return (
-    <Tag bg={"gray"} fontSize={"sm"}>
+    <Tag bg={"black"} fontSize={"sm"} color="white">
       {remainingTime.days}d-{remainingTime.hours}h-{remainingTime.minutes}m-{remainingTime.seconds}s
     </Tag>
   );

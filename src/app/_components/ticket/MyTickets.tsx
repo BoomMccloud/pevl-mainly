@@ -2,13 +2,22 @@
 
 import React from "react";
 
+import { ViewIcon } from "@chakra-ui/icons";
 import {
   Box,
   Divider,
   Heading,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Table,
   TableCaption,
   TableContainer,
+  Tag,
   Tbody,
   Td,
   Th,
@@ -16,6 +25,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import moment from "moment";
+import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
 import type { TicketType } from "@/server/lib/LotteryService";
@@ -34,29 +44,51 @@ function MyTickets() {
       <Heading as="h2" fontSize={"1.5rem"} mb={10} className="text-shadow">
         My Ticket List
       </Heading>
-      <TableContainer>
+      <TableContainer overflowX={"scroll"}>
         <Table variant="striped">
           <TableCaption>Imperial to metric conversion factors</TableCaption>
           <Thead>
             <Tr>
-              <Th isNumeric>Index</Th>
               <Th>Phase</Th>
               <Th>Tickets</Th>
-              <Th>TxHash</Th>
-              <Th>Pool</Th>
-              <Th>TxTime</Th>
+              <Th>View</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {Object.keys(records ?? {}).map((key, index) => {
+            {Object.keys(records ?? {}).map((key) => {
               return (
                 <Tr key={`ticket-${key}`}>
-                  <Td isNumeric>{index}</Td>
-                  <Td>{records[key].currentPhase?.slice(-14)}</Td>
-                  <Td>{JSON.stringify(records[key].tickets)}</Td>
-                  <Td>{key}</Td>
-                  <Td>{records[key].poolCode}</Td>
-                  <Td>{moment(records[key].txTime).format("YYYY-MM-DD HH:mm:ss")}</Td>
+                  <Td>
+                    <Popover>
+                      <PopoverTrigger>
+                        <Tag bg="blue.300">
+                          {records[key].currentPhase?.slice(-14)}
+                          <ViewIcon />
+                        </Tag>
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverHeader>{key}!</PopoverHeader>
+                        <PopoverBody>
+                          <Box>{records[key].poolCode}</Box>
+                          <Box>{moment(records[key].txTime).format("YYYY-MM-DD HH:mm:ss")}</Box>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  </Td>
+                  <Td>
+                    {records[key].tickets.map((t) => {
+                      return (
+                        <Tag bg="green.300" key={t}>
+                          {t}
+                        </Tag>
+                      );
+                    })}
+                  </Td>
+                  <Td>
+                    <GiLaurelsTrophy color={"gold"} size={30} />
+                  </Td>
                 </Tr>
               );
             })}

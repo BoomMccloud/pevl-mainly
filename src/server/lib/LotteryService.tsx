@@ -31,6 +31,7 @@ type PoolType = {
   difficulty: Difficulty;
   period: string;
   price: number;
+  prize: number;
 };
 
 type TicketType = {

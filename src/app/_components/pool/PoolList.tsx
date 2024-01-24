@@ -18,9 +18,9 @@ import {
 
 import PoolState from "@/app/_components/pool/PoolState";
 import CreateTicket from "@/app/_components/ticket/CreateTicket";
+import { cronExpressionToDescription } from "@/app/_util/cronToDesc";
 import { type PoolStateType } from "@/server/lib/LotteryService";
 import { api } from "@/trpc/react";
-import { cronExpressionToDescription } from "@/utils/cronExpressionToDesc";
 
 function PoolList() {
   const { data } = api.pool.poolStateList.useQuery();

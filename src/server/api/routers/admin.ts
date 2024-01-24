@@ -11,8 +11,8 @@ export const adminRouter = createTRPCRouter({
     try {
       await kvStore.clean("LOTTERY*");
       const initPool: Record<string, PoolType> = {};
-      for (const lotteryPoolProp of Object.values(InitPoolConfig)) {
-        initPool[lotteryPoolProp.prop.poolCode] = lotteryPoolProp.prop;
+      for (const key in InitPoolConfig) {
+        initPool[key] = InitPoolConfig[key].prop;
       }
       const r1 = await kvStore.save(ConstantKey.LOTTERY_POOLS, initPool);
       return { code: 200, message: "OK", result: r1 };

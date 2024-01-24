@@ -18,6 +18,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
 import { nextTime } from "@/app/_util/util";
@@ -64,6 +65,7 @@ function MyRaffles() {
                   </Td>
                   <Td>
                     <Countdown targetDate={nextTime("*/30 * * * * *")} />
+                    <GiLaurelsTrophy />
                   </Td>
                 </Tr>
               );

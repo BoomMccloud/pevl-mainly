@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
+import { CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Heading,
@@ -17,6 +17,7 @@ import {
   StatNumber,
   Tag,
 } from "@chakra-ui/react";
+import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
 import Countdown from "@/app/_components/Countdown";
@@ -31,27 +32,24 @@ function PoolState(props: { title: string; pool: PoolType; phaseResult: PhaseRes
     <>
       <StatGroup>
         <Stat>
-          <StatLabel>Collected Fees</StatLabel>
-          <StatNumber>£345,670</StatNumber>
+          <StatLabel>Prize</StatLabel>
+          <StatNumber>${pool.prize ?? 0} </StatNumber>
           <StatHelpText>
-            <StatArrow type="increase" />
-            23.36%
+            <StatArrow type={"increase"} />
+          </StatHelpText>
+        </Stat>
+        <Stat>
+          <StatLabel>Collected Fees</StatLabel>
+          <StatNumber>${(phaseResult?.ticketCount ?? 0) * pool.price} </StatNumber>
+          <StatHelpText>
+            <StatArrow type={"increase"} />
           </StatHelpText>
         </Stat>
         <Stat>
           <StatLabel>Tickets Count</StatLabel>
-          <StatNumber>45</StatNumber>
+          <StatNumber>{phaseResult?.ticketCount ?? 0} </StatNumber>
           <StatHelpText>
-            <StatArrow type="decrease" />
-            9.05%
-          </StatHelpText>
-        </Stat>
-        <Stat>
-          <StatLabel>Clicked</StatLabel>
-          <StatNumber>45</StatNumber>
-          <StatHelpText>
-            <StatArrow type="decrease" />
-            9.05%
+            <StatArrow type={"increase"} />
           </StatHelpText>
         </Stat>
       </StatGroup>
@@ -75,7 +73,7 @@ function PoolState(props: { title: string; pool: PoolType; phaseResult: PhaseRes
               </ListItem>
               <ListItem>
                 {phaseResult?.hitAddr == address ? (
-                  <Icon as={CheckCircleIcon} w={8} h={8} color="green.500" />
+                  <Icon as={GiLaurelsTrophy} w={8} h={8} color="yellow.300" />
                 ) : (
                   <Icon as={CloseIcon} w={8} h={8} color="red.500" />
                 )}

@@ -6,8 +6,8 @@ import {
   Button,
   Card,
   CardBody,
-  HStack,
   Heading,
+  HStack,
   Input,
   Link,
   Stack,
@@ -52,7 +52,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
               </>
             )}
             <Box>
-              <Link as={NextLink} href="/ticket">
+              <Link as={NextLink} href={"/ticket"}>
                 Check your tickets
               </Link>
             </Box>
@@ -111,7 +111,19 @@ export const PoolCard = ({ pool }: PoolStateType) => {
         message: error.message,
       });
     }
-  }, [receipt, isError, error, notifySuccess, notifyError]);
+  }, [
+    receipt,
+    isError,
+    error,
+    notifySuccess,
+    notifyError,
+    saveOrUpdate,
+    poolCode,
+    name,
+    ticketAmount,
+    address,
+    searchParams,
+  ]);
   return (
     <Card maxW="sm">
       <CardBody>

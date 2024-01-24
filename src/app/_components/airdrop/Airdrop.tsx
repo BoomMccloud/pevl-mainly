@@ -2,11 +2,10 @@
 
 import React from "react";
 
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
+  Alert,
   Avatar,
   Box,
-  Button,
   Card,
   CardBody,
   CardFooter,
@@ -14,38 +13,50 @@ import {
   Center,
   Flex,
   Heading,
-  IconButton,
-  Text,
+  Stat,
+  StatGroup,
+  StatLabel,
+  StatNumber,
+  Tag,
 } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
 
 import Qr from "@/app/_components/Qr";
+import type { LotteryPointType } from "@/server/lib/LotteryService";
+import { api } from "@/trpc/react";
 
 function Airdrop() {
+  const { address } = useAccount();
+  const { data } = api.user.getReferral.useQuery({ address: address ?? "" });
+  const pointObj = data?.result as LotteryPointType;
   return (
     <Card maxW="md">
       <CardHeader>
         <Flex>
           <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
             <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-
             <Box>
-              <Heading size="sm">Segun Adebayo</Heading>
-              <Text>Creator, Chakra UI</Text>
+              <Heading size="sm">{pointObj?.code ?? "-"}</Heading>
+              <Tag>Referral Code</Tag>
             </Box>
           </Flex>
-          <IconButton
-            variant="ghost"
-            colorScheme="gray"
-            aria-label="See menu"
-            icon={<CheckCircleIcon />}
-          />
         </Flex>
       </CardHeader>
       <CardBody>
-        <Text>
-          With Chakra UI, I wanted to sync the speed of development with the speed of design. I
-          wanted the developer to be just as excited as the designer to create a screen.
-        </Text>
+        <StatGroup>
+          <Stat>
+            <StatLabel>Your Points</StatLabel>
+            <StatNumber>{pointObj?.points ?? 0}</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Referrals Points</StatLabel>
+            <StatNumber>{pointObj?.refPoints ?? 0}</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Your Referrals</StatLabel>
+            <StatNumber>{pointObj?.refNum ?? 0}</StatNumber>
+          </Stat>
+        </StatGroup>
       </CardBody>
       <Center>
         <Qr />
@@ -60,15 +71,11 @@ function Airdrop() {
           },
         }}
       >
-        <Button flex="1" variant="ghost" leftIcon={<CheckCircleIcon />}>
-          Like
-        </Button>
-        <Button flex="1" variant="ghost" leftIcon={<CheckCircleIcon />}>
-          Comment
-        </Button>
-        <Button flex="1" variant="ghost" leftIcon={<CheckCircleIcon />}>
-          Share
-        </Button>
+        <Alert fontSize={"sm"}>
+          We believe that Blast will be looking for traction from projects when evaluating for the
+          hackathon. Also, we want to launch quickly, iron out bugs, and get initial user feedback.
+          To incentivize users, we will provide points when using Testnet.
+        </Alert>
       </CardFooter>
     </Card>
   );

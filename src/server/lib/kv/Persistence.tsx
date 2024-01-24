@@ -26,11 +26,18 @@ export type Persistence = {
    */
   save: (namespace: unknown, kv: { [propName: string]: unknown }) => Promise<boolean>;
   /**
+   * save by nx
+   * @param namespace
+   * @param key
+   * @param val
+   */
+  saveNx: (namespace: unknown, key: string, val: unknown) => Promise<boolean>;
+  /**
    * get by key
    * @param namespace
    * @param key
    */
-  get: (namespace: string, key: string) => Promise<object>;
+  get: (namespace: string, key: string) => Promise<unknown>;
   /**
    * find list
    * @param namespace
@@ -60,9 +67,9 @@ class KvPersistence implements Persistence {
     return await this.client.hkeys(namespace);
   }
 
-  async get(namespace: string, key: string): Promise<object> {
+  async get(namespace: string, key: string): Promise<unknown> {
     const data = await this.client.hget(namespace, key);
-    return data as object;
+    return data;
   }
 
   async list(namespace: string): Promise<Record<string, unknown>> {
@@ -72,6 +79,11 @@ class KvPersistence implements Persistence {
 
   async save(namespace: unknown, kv: { [p: string]: unknown }): Promise<boolean> {
     const data = await this.client.hset(namespace as string, kv);
+    return data == 1;
+  }
+
+  async saveNx(namespace: unknown, key: string, val: unknown): Promise<boolean> {
+    const data = await this.client.hsetnx(namespace as string, key, val);
     return data == 1;
   }
 

@@ -2,11 +2,11 @@
 
 import React from "react";
 
-import { ViewIcon } from "@chakra-ui/icons";
 import {
   Box,
   Divider,
   Heading,
+  Icon,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -14,6 +14,9 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
+  Stat,
+  StatHelpText,
+  StatNumber,
   Table,
   TableCaption,
   TableContainer,
@@ -24,70 +27,82 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import moment from "moment";
+import moment from "moment/moment";
 import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
-import type { TicketType } from "@/server/lib/LotteryService";
+import { nextTime } from "@/app/_util/util";
+import type { MyTicketType } from "@/server/lib/LotteryService";
 import { api } from "@/trpc/react";
+
+import Countdown from "../Countdown";
 
 function MyTickets() {
   const { address } = useAccount();
 
   const { data } = api.user.ticketsList.useQuery({ address: address ?? "alec-test-address" });
-  const records = data?.result as Record<string, TicketType>;
+  const records = data?.result as Record<string, MyTicketType>;
   const tickets = Object.values(records ?? {});
-  tickets?.sort((a, b) => a.txTime - b.txTime);
-
+  tickets?.sort((a, b) => a.currentPhase.localeCompare(b.currentPhase));
+  console.log(records);
   return (
     <Box>
       <Heading as="h2" fontSize={"1.5rem"} mb={10} className="text-shadow">
-        My Ticket List
+        My Raffles List
       </Heading>
-      <TableContainer overflowX={"scroll"}>
+      <TableContainer>
         <Table variant="striped">
           <TableCaption>Imperial to metric conversion factors</TableCaption>
           <Thead>
             <Tr>
               <Th>Phase</Th>
-              <Th>Tickets</Th>
-              <Th>View</Th>
+              <Th>Bet</Th>
+              <Th>Prize Pool</Th>
+              <Th>Result</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {Object.keys(records ?? {}).map((key) => {
+            {tickets.map((record) => {
               return (
-                <Tr key={`ticket-${key}`}>
+                <Tr key={`ticket-${record.currentPhase}`}>
+                  <Td>{record.currentPhase?.slice(-14)}</Td>
                   <Td>
                     <Popover>
                       <PopoverTrigger>
-                        <Tag bg="blue.300">
-                          {records[key].currentPhase?.slice(-14)}
-                          <ViewIcon />
+                        <Tag fontSize={"xl"} bg="blue.300">
+                          {(record.ticketCount * record.pool.price).toFixed(3)}ETH
                         </Tag>
                       </PopoverTrigger>
                       <PopoverContent>
                         <PopoverArrow />
                         <PopoverCloseButton />
-                        <PopoverHeader>{key}!</PopoverHeader>
+                        <PopoverHeader>Ticket Count:{record.ticketCount}!</PopoverHeader>
                         <PopoverBody>
-                          <Box>{records[key].poolCode}</Box>
-                          <Box>{moment(records[key].txTime).format("YYYY-MM-DD HH:mm:ss")}</Box>
+                          {record.txList.map((tx) => {
+                            return (
+                              <Box key={tx.txHash}>
+                                {moment(tx.txTime).format("YYYY-MM-DD HH:mm:ss")} - {tx.tickets}
+                              </Box>
+                            );
+                          })}
                         </PopoverBody>
                       </PopoverContent>
                     </Popover>
                   </Td>
                   <Td>
-                    {records[key].tickets.map((t) => {
-                      return (
-                        <Tag bg="green.300" key={t}>
-                          {t}
-                        </Tag>
-                      );
-                    })}
+                    <Stat>
+                      <StatNumber>
+                        {(record.phaseTicketCount * record.pool.price).toFixed(3)} ETH
+                      </StatNumber>
+                      <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                    </Stat>
                   </Td>
                   <Td>
-                    <GiLaurelsTrophy color={"gold"} size={30} />
+                    {record.isWon ? (
+                      <Icon as={GiLaurelsTrophy} w={8} h={8} color="yellow.300" />
+                    ) : (
+                      <Countdown targetDate={nextTime(record.pool.period)} />
+                    )}
                   </Td>
                 </Tr>
               );

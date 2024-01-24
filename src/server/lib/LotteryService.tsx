@@ -34,6 +34,16 @@ type PoolType = {
   prize: number;
 };
 
+type MyTicketType = {
+  currentPhase: string;
+  phaseTicketCount: number;
+  ticketCount: number;
+  result: PhaseResult;
+  txList: TicketType[];
+  isWon: boolean;
+  pool: PoolType;
+};
+
 type TicketType = {
   poolCode: string;
   address: string;
@@ -53,17 +63,37 @@ type PhaseResult = {
   hitTicket: string | undefined;
 };
 
+type LotteryPointType = {
+  code: string;
+  points: number;
+  refPoints: number;
+  refNum: number;
+};
+
 enum ConstantKey {
-  //当前期
-  LOTTERY_CURRENT_PHASE = "LOTTERY_CURRENT_PHASE",
-  //最近期
-  LOTTERY_LAST_PHASE = "LOTTERY_LAST_PHASE",
-  //每期开奖结果
-  LOTTERY_PHASE_RESULT = "LOTTERY_PHASE_RESULT",
-  //票证总数
-  LOTTERY_PHASE_TICKET_COUNT = "LOTTERY_PHASE_TICKET_COUNT",
   //所有池信息
   LOTTERY_POOLS = "LOTTERY_POOLS",
+  //当前期code
+  LOTTERY_CURRENT_PHASE = "LOTTERY_CURRENT_PHASE",
+  //最近期code
+  LOTTERY_LAST_PHASE = "LOTTERY_LAST_PHASE",
+  //code对应的用户
+  LOTTERY_REFERRAL_TO_USER = "LOTTERY_REFERRAL_TO_USER",
+}
+
+enum ConstantField {
+  //每期开奖结果
+  PHASE_RESULT_FIELD = "PHASE_RESULT",
+  //票证总数
+  PHASE_TICKET_COUNT_FIELD = "PHASE_TICKET_COUNT",
+  //自己积分总数
+  USER_POINT_SUM_FIELD = "USER_POINT_SUM",
+  //别人帮我积分
+  USER_REF_POINT_SUM_FIELD = "USER_REF_POINT_SUM",
+  //推荐了多少人
+  USER_REF_TO_COUNT_FIELD = "USER_REF_TO_COUNT",
+  //我的推荐人
+  USER_REF_CODE = "USER_REF_CODE",
 }
 
 class LotteryService {
@@ -85,11 +115,11 @@ class LotteryService {
       const currentKey = currentPhaseKeyRecord && (currentPhaseKeyRecord[poolCode] as string);
       const ticketCount =
         currentKey &&
-        ((await this.kv.hget(currentKey, ConstantKey.LOTTERY_PHASE_TICKET_COUNT)) as number);
+        ((await this.kv.hget(currentKey, ConstantField.PHASE_TICKET_COUNT_FIELD)) as number);
       //###
       const lastPhaseKey = lastPhaseKeyRecord && (lastPhaseKeyRecord[poolCode] as string);
       const lastPhase =
-        lastPhaseKey && (await this.kv.hget(lastPhaseKey, ConstantKey.LOTTERY_PHASE_RESULT));
+        lastPhaseKey && (await this.kv.hget(lastPhaseKey, ConstantField.PHASE_RESULT_FIELD));
       //##
       const poolState: PoolStateType = {
         pool,
@@ -140,7 +170,7 @@ class LotteryService {
     const hitTx = ticketAndTxMap.get(hitTicket);
     const hitAddr = hitTx?.map((tx) => txAndAddressMap.get(tx));
     //开奖号码
-    await this.kv.hsetnx(currentPhase as string, ConstantKey.LOTTERY_PHASE_RESULT, {
+    await this.kv.hsetnx(currentPhase as string, ConstantField.PHASE_RESULT_FIELD, {
       poolCode,
       currentPhase,
       ticketCount: ticketAndTxMap.size,
@@ -152,18 +182,43 @@ class LotteryService {
     return currentPhase as string;
   }
 
-  async createTicket(props: TicketType) {
+  async createTicket(props: TicketType, refCode?: string) {
     let currentPhase = await this.kv.hget(ConstantKey.LOTTERY_CURRENT_PHASE, props.poolCode);
     if (!currentPhase) {
       currentPhase = await this.__startNewPhase(props.poolCode);
     }
-    //归入某期
+    const ticketCount = props.tickets.length;
+    //归入某期计数
     await this.kv.hsetnx(currentPhase as string, props.txHash, { ...props });
-    //归入用户
-    const result = await this.kv.hsetnx(`LOTTERY_ADDR_${props.address}`, props.txHash, {
-      ...props,
-      currentPhase,
-    });
+    await this.kv.hincrby(
+      currentPhase as string,
+      ConstantField.PHASE_TICKET_COUNT_FIELD,
+      ticketCount,
+    );
+    //归入用户积分
+    const userKey = this.getUserNamespace(props.address);
+    const result = await this.kv.hsetnx(userKey, props.txHash, { ...props, currentPhase });
+    await this.kv.hincrby(userKey, ConstantField.USER_POINT_SUM_FIELD, ticketCount * 100);
+    if (refCode) {
+      //保存我的推荐人
+      await this.kv.hsetnx(userKey, ConstantField.USER_REF_CODE, refCode);
+      //推荐人积分
+      const refAddr = await this.kv.hget(ConstantKey.LOTTERY_REFERRAL_TO_USER, refCode);
+      const refKey = this.getUserNamespace(refAddr as string);
+      await this.kv.hincrby(refKey, ConstantField.USER_REF_POINT_SUM_FIELD, ticketCount * 50);
+      //统计推荐人头数
+      await this.kv.hincrby(refKey, ConstantField.USER_REF_TO_COUNT_FIELD, 1);
+      //找到推荐人的推荐人
+      const refRefCode = (await this.kv.hget(refKey, ConstantField.USER_REF_CODE)) as string;
+      if (refRefCode) {
+        const refRefAddr = await this.kv.hget(ConstantKey.LOTTERY_REFERRAL_TO_USER, refRefCode);
+        await this.kv.hincrby(
+          this.getUserNamespace(refRefAddr as string),
+          ConstantField.USER_REF_POINT_SUM_FIELD,
+          ticketCount * 25,
+        );
+      }
+    }
     return result == 1;
   }
 
@@ -199,9 +254,21 @@ class LotteryService {
   randomHex() {
     return Number(Math.floor(Math.random() * 10000000) + 1).toString(16);
   }
+
+  getUserNamespace(address: string) {
+    return `LOTTERY_ADDR_${address}`;
+  }
 }
 
 const lottery = new LotteryService();
 
-export { lottery, Difficulty, ConstantKey };
-export type { ResponseTPRC, PoolType, TicketType, PhaseResult, PoolStateType };
+export { lottery, Difficulty, ConstantKey, ConstantField };
+export type {
+  ResponseTPRC,
+  PoolType,
+  TicketType,
+  PhaseResult,
+  PoolStateType,
+  LotteryPointType,
+  MyTicketType,
+};

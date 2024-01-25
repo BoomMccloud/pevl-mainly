@@ -19,9 +19,10 @@ import { nanoid } from "nanoid";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import { parseEther } from "viem";
-import { useAccount, useSendTransaction, useWaitForTransaction } from "wagmi";
+import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from "wagmi";
 
-import { CHAIN_CONFIG, FUND_WALLET_ADDRESS, TICKET_PRICE } from "@/const";
+import { ticketPath } from "@/components/Header/Header";
+import { CHAIN_CONFIG, FUND_WALLET_ADDRESS } from "@/const";
 import { useNotify } from "@/hooks";
 import type { PoolStateType } from "@/server/lib/LotteryService";
 import { api } from "@/trpc/react";
@@ -34,6 +35,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
   const { notifyError, notifySuccess } = useNotify();
   const { address } = useAccount();
   const searchParams = useSearchParams();
+  const { chain } = useNetwork();
 
   const saveOrUpdate = api.user.saveTickets.useMutation({
     onSuccess: () => {
@@ -44,7 +46,10 @@ export const PoolCard = ({ pool }: PoolStateType) => {
             {receipt?.transactionHash && (
               <>
                 Hash:
-                <Link href={`${CHAIN_CONFIG}/tx/${receipt?.transactionHash}`} isExternal>
+                <Link
+                  href={`${CHAIN_CONFIG[chain!.id].blockExplorer}/tx/${receipt?.transactionHash}`}
+                  isExternal
+                >
                   {" "}
                   {getEllipsisTxt(receipt?.transactionHash)}
                   <ExternalLinkIcon mx="2px" />
@@ -52,7 +57,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
               </>
             )}
             <Box>
-              <Link as={NextLink} href={"/ticket"}>
+              <Link as={NextLink} href={ticketPath}>
                 Check your tickets
               </Link>
             </Box>
@@ -89,7 +94,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
   const handleTransfer = () => {
     sendTransaction({
       to: FUND_WALLET_ADDRESS,
-      value: parseEther((ticketAmount * TICKET_PRICE).toString()),
+      value: parseEther((ticketAmount * 0.00001).toString()),
     });
   };
 
@@ -111,19 +116,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
         message: error.message,
       });
     }
-  }, [
-    receipt,
-    isError,
-    error,
-    notifySuccess,
-    notifyError,
-    saveOrUpdate,
-    poolCode,
-    name,
-    ticketAmount,
-    address,
-    searchParams,
-  ]);
+  }, [receipt, isError, error]);
   return (
     <Card maxW="sm">
       <CardBody>

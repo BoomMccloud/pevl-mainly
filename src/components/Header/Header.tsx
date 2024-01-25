@@ -12,6 +12,8 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { DarkModeButton } from "../DarkModeButton";
 
+export const ticketPath = "/tickets";
+
 export const routes = [
   {
     title: "Games",
@@ -20,7 +22,7 @@ export const routes = [
   },
   {
     title: "Tickets",
-    path: "/tickets",
+    path: ticketPath,
     icon: <EmailIcon />,
   },
   {

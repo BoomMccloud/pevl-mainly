@@ -44,7 +44,7 @@ function MyTickets() {
   const { data } = api.user.ticketsList.useQuery({ address: address ?? "alec-test-address" });
   const records = data?.result as Record<string, MyTicketType>;
   const tickets = Object.values(records ?? {});
-  tickets?.sort((a, b) => a.currentPhase.localeCompare(b.currentPhase));
+  tickets?.sort((a, b) => b.currentPhase.localeCompare(a.currentPhase));
   console.log(records);
   return (
     <Box>

@@ -14,7 +14,6 @@ import {
   StatHelpText,
   StatNumber,
   Table,
-  TableCaption,
   TableContainer,
   Tag,
   Tbody,
@@ -36,7 +35,7 @@ import { api } from "@/trpc/react";
 export const TicketTable: React.FC = () => {
   const { address } = useAccount();
 
-  const { data } = api.user.ticketsList.useQuery(
+  const { data, isLoading } = api.user.ticketsList.useQuery(
     { address: address as string },
     { enabled: !!address },
   );
@@ -112,71 +111,76 @@ export const TicketTable: React.FC = () => {
       {/*    </Tbody>*/}
       {/*  </Table>*/}
       {/*</TableContainer>*/}
-      <TableContainer>
-        <Table variant="simple">
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>Phase</Th>
-              <Th>Bet</Th>
-              <Th>Prize Pool</Th>
-              <Th>Result</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {tickets.map((record) => {
-              return (
-                <Tr key={`ticket-${record.currentPhase}`}>
-                  <Td>{record.currentPhase?.slice(-14)}</Td>
-                  <Td>
-                    <Popover>
-                      <PopoverTrigger>
-                        <Tag fontSize={"xl"} bg="blue.300">
-                          {(record.ticketCount * record.pool.price).toFixed(3)}ETH
-                        </Tag>
-                      </PopoverTrigger>
-                      <PopoverContent>
-                        <PopoverArrow />
-                        <PopoverCloseButton />
-                        <PopoverHeader>Ticket Count:{record.ticketCount}!</PopoverHeader>
-                        <PopoverBody>
-                          {record.txList.map((tx) => {
-                            return (
-                              <Box key={tx.txHash}>
-                                {moment(tx.txTime).format("YYYY-MM-DD HH:mm:ss")} - {tx.tickets}
-                              </Box>
-                            );
-                          })}
-                        </PopoverBody>
-                      </PopoverContent>
-                    </Popover>
-                  </Td>
-                  <Td>
-                    <Stat>
-                      <StatNumber>
-                        {(record.phaseTicketCount * record.pool.price).toFixed(3)} ETH
-                      </StatNumber>
-                      <StatHelpText>{record.pool.name}</StatHelpText>
-                    </Stat>
-                  </Td>
-                  <Td>
-                    {record.isWon == undefined ? (
-                      <Countdown targetDate={nextTime(record.pool.period)} />
-                    ) : (
-                      <Icon
-                        as={record.isWon ? GiLaurelsTrophy : FaSadCry}
-                        w={8}
-                        h={8}
-                        color={record.isWon ? "yellow.300" : "red"}
-                      />
-                    )}
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" height="300px">
+          <Spinner color="yellow" />
+        </Box>
+      ) : (
+        <TableContainer>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Phase</Th>
+                <Th>Bet</Th>
+                <Th>Prize Pool</Th>
+                <Th>Result</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {tickets.map((record) => {
+                return (
+                  <Tr key={`ticket-${record.currentPhase}`}>
+                    <Td>{record.currentPhase?.slice(-14)}</Td>
+                    <Td>
+                      <Popover>
+                        <PopoverTrigger>
+                          <Tag fontSize={"xl"} bg="blue.300">
+                            {(record.ticketCount * record.pool.price).toFixed(3)}ETH
+                          </Tag>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverHeader>Ticket Count:{record.ticketCount}!</PopoverHeader>
+                          <PopoverBody>
+                            {record.txList.map((tx) => {
+                              return (
+                                <Box key={tx.txHash}>
+                                  {moment(tx.txTime).format("YYYY-MM-DD HH:mm:ss")} - {tx.tickets}
+                                </Box>
+                              );
+                            })}
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
+                    </Td>
+                    <Td>
+                      <Stat>
+                        <StatNumber>
+                          {(record.phaseTicketCount * record.pool.price).toFixed(3)} ETH
+                        </StatNumber>
+                        <StatHelpText>{record.pool.name}</StatHelpText>
+                      </Stat>
+                    </Td>
+                    <Td>
+                      {record.isWon == undefined ? (
+                        <Countdown targetDate={nextTime(record.pool.period)} />
+                      ) : (
+                        <Icon
+                          as={record.isWon ? GiLaurelsTrophy : FaSadCry}
+                          w={8}
+                          h={8}
+                          color={record.isWon ? "yellow.300" : "red"}
+                        />
+                      )}
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      )}
     </>
   );
 };

@@ -15,6 +15,7 @@ import {
   Text,
   useNumberInput,
 } from "@chakra-ui/react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import Countdown, { zeroPad } from "react-countdown";
@@ -31,6 +32,7 @@ import { getEllipsisTxt } from "@/utils/formatters";
 
 export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
   const { name, difficulty, price, poolCode, period } = pool;
+  const { isConnected } = useAccount();
 
   const { data, error, isLoading, isError, sendTransaction } = useSendTransaction();
   const { data: receipt, isLoading: isPending } = useWaitForTransaction({ hash: data?.hash });
@@ -163,12 +165,24 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
           <HStack mb={2}>
             <Button {...dec}>-</Button>
             <Input {...input} style={{ textAlign: "center" }} />
-            <Button {...inc}>+</Button>
+            <Button className="custom-button" {...inc}>
+              +
+            </Button>
           </HStack>
           <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
-          <Button onClick={handleTransfer} isLoading={isLoading || isPending}>
-            Buy tickets
-          </Button>
+          {isConnected ? (
+            <Button
+              className="custom-button"
+              onClick={handleTransfer}
+              isLoading={isLoading || isPending}
+            >
+              Buy tickets
+            </Button>
+          ) : (
+            <Box display="flex" justifyContent="center">
+              <ConnectButton />
+            </Box>
+          )}
         </Stack>
       </CardBody>
     </Card>

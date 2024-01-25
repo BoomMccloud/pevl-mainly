@@ -2,15 +2,13 @@
 import { type FC } from "react";
 
 import { EmailIcon } from "@chakra-ui/icons";
-import { Button, HStack, Heading } from "@chakra-ui/react";
+import { Button, HStack } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import logo from "public/img/logo_transparent.png";
+import logo from "public/img/logo-with-text-transparent.svg";
 
 import { useWindowSize } from "@/hooks/useWindowSize";
-
-import { DarkModeButton } from "../DarkModeButton";
 
 export const ticketPath = "/tickets";
 
@@ -56,12 +54,9 @@ const Header: FC = () => {
       justifyContent={"space-between"}
     >
       <HStack>
-        <Image src={logo.src} alt="logo" width={45} height={45} />
+        <Image src={logo.src} alt="logo" width={132} height={48} />
         {!isTablet && (
           <>
-            <Heading as="h1" fontSize={"1.5rem"} className="text-shadow">
-              PEVL
-            </Heading>{" "}
             {routes.map((route) => {
               return (
                 <Button
@@ -70,6 +65,7 @@ const Header: FC = () => {
                   onClick={() => {
                     router.push(route.path);
                   }}
+                  className="custom-button"
                 >
                   {route.title}
                 </Button>
@@ -81,7 +77,7 @@ const Header: FC = () => {
 
       <HStack>
         <ConnectButton />
-        <DarkModeButton />
+        {/* <DarkModeButton /> */}
       </HStack>
     </HStack>
   );

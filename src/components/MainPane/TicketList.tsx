@@ -21,7 +21,13 @@ const TicketList: FC = () => {
         Your Tickets
       </Heading>
 
-      {isConnected ? <TicketTable /> : <ConnectButton />}
+      {isConnected ? (
+        <TicketTable />
+      ) : (
+        <Box height={300} display="flex" alignItems="center" justifyContent="center">
+          <ConnectButton />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -2,17 +2,13 @@
 import { type FC } from "react";
 
 import { Box, Heading, useColorMode } from "@chakra-ui/react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
 
 // import LotteryMain from "@/app/_components/LotteryMain";
-import { Prize } from "@/components/MainPane/components/Prize";
 import styles from "@/styles/mainPane.module.css";
 
 import { BuyTicket } from "./components";
 
 const MainPane: FC = () => {
-  const { isConnected } = useAccount();
   const { colorMode } = useColorMode();
 
   return (
@@ -23,8 +19,8 @@ const MainPane: FC = () => {
       <Heading as="h2" fontSize={"2rem"} mb={10}>
         PEVL Games
       </Heading>
-
-      {isConnected ? <BuyTicket /> : <ConnectButton />}
+      <BuyTicket />
+      {/* {isConnected ? : <ConnectButton />} */}
       {/* <LotteryMain /> */}
     </Box>
   );

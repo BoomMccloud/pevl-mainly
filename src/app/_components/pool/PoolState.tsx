@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Heading,
@@ -17,6 +16,7 @@ import {
   StatNumber,
   Tag,
 } from "@chakra-ui/react";
+import { FaSadCry } from "react-icons/fa";
 import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
@@ -68,7 +68,7 @@ function PoolState(props: { title: string; pool: PoolType; phaseResult: PhaseRes
                 {phaseResult?.hitAddr == address ? (
                   <Icon as={GiLaurelsTrophy} w={8} h={8} color="yellow.300" />
                 ) : (
-                  <Icon as={CloseIcon} w={8} h={8} color="red.500" />
+                  <Icon as={FaSadCry} w={8} h={8} color="red.500" />
                 )}
               </ListItem>
             </>

@@ -13,7 +13,14 @@ import { getUrl, transformer } from "./shared";
 export const api = createTRPCReact<AppRouter>();
 
 export function TRPCReactProvider(props: { children: React.ReactNode; cookies: string }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+      },
+    },
+  }));
 
   const [trpcClient] = useState(() =>
     api.createClient({

@@ -14,25 +14,30 @@ import { DarkModeButton } from "../DarkModeButton";
 
 export const routes = [
   {
-    title: "Lottery",
+    title: "Games",
     path: "/",
     icon: <EmailIcon />,
   },
   {
-    title: "Ticket",
-    path: "/ticket",
+    title: "Tickets",
+    path: "/tickets",
     icon: <EmailIcon />,
   },
   {
-    title: "Referral",
-    path: "/referral",
+    title: "Referrals",
+    path: "/referrals",
     icon: <EmailIcon />,
   },
-  {
-    title: "Debugger",
-    path: "/debugger",
-    icon: <EmailIcon />,
-  },
+
+  ...(process.env.NODE_ENV === "development"
+    ? [
+        {
+          title: "Debugger",
+          path: "/debugger",
+          icon: <EmailIcon />,
+        },
+      ]
+    : []),
 ];
 
 const Header: FC = () => {

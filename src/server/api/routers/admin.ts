@@ -1,6 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { kvStore } from "@/server/lib/kv/Persistence";
-import { type PoolType, ConstantKey, type ResponseTPRC } from "@/server/lib/LotteryService";
+import { ConstantKey, type ResponseTPRC } from "@/server/lib/LotteryService";
 import InitPoolConfig from "@/server/lib/PoolConfig";
 
 export const adminRouter = createTRPCRouter({
@@ -10,9 +10,9 @@ export const adminRouter = createTRPCRouter({
   initPool: publicProcedure.mutation(async (): Promise<ResponseTPRC> => {
     try {
       await kvStore.clean("LOTTERY*");
-      const initPool: Record<string, PoolType> = {};
+      const initPool: Record<string, string> = {};
       for (const key in InitPoolConfig) {
-        initPool[key] = InitPoolConfig[key].prop;
+        initPool[key] = JSON.stringify(InitPoolConfig[key].prop);
       }
       const r1 = await kvStore.save(ConstantKey.LOTTERY_POOLS, initPool);
       return { code: 200, message: "OK", result: r1 };

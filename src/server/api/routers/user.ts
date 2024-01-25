@@ -86,36 +86,30 @@ export const userRouter = createTRPCRouter({
     .query(async ({ input }): Promise<ResponseTPRC> => {
       try {
         const poolMap = await kvStore.list(ConstantKey.LOTTERY_POOLS);
-        const r = (await kvStore.list(lottery.getUserNamespace(input.address))) as Record<
-          string,
-          TicketType
-        >;
+        const r = (await kvStore.list(lottery.getUserNamespace(input.address)));
         const phaseMap: Record<string, MyTicketType> = {};
         for (const ticketTx in r) {
           if (ticketTx.startsWith("USER_")) {
             continue;
           }
-          const currentPhase = r[ticketTx].currentPhase;
+          const ticket = JSON.parse(r[ticketTx]) as TicketType;
+          const currentPhase = ticket.currentPhase;
           let obj = phaseMap[currentPhase];
           if (!obj) {
             //当前期总票数
-            const phaseTicketCount = (await kvStore.get(
-              currentPhase,
-              ConstantField.PHASE_TICKET_COUNT_FIELD,
-            )) as number;
-            const result = (await kvStore.get(
-              currentPhase,
-              ConstantField.PHASE_RESULT_FIELD,
-            )) as PhaseResult;
+            const phaseTicketCountStr = await kvStore.get(currentPhase, ConstantField.PHASE_TICKET_COUNT_FIELD);
+            const phaseTicketCount = phaseTicketCountStr != null ? parseInt(phaseTicketCountStr) : 0;
+            const resultStr = await kvStore.get(currentPhase, ConstantField.PHASE_RESULT_FIELD);
+            const result = resultStr != null ? JSON.parse(resultStr) as PhaseResult : undefined;
             const txList: TicketType[] = [];
             const ticketCount = 0;
             const isWon = undefined;
-            const pool = poolMap[r[ticketTx].poolCode] as PoolType;
+            const pool = JSON.parse(poolMap[ticket.poolCode]) as PoolType;
             obj = { currentPhase, phaseTicketCount, ticketCount, result, txList, isWon, pool };
           }
           const { txList, result } = obj;
-          txList.push(r[ticketTx]);
-          obj.ticketCount += r[ticketTx].tickets.length;
+          txList.push(ticket);
+          obj.ticketCount += ticket.tickets.length;
           if (result) {
             obj.isWon = result.hitAddr != undefined && result.hitAddr.includes(input.address);
           }

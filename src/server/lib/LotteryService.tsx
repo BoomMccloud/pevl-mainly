@@ -1,6 +1,5 @@
 import "server-only";
-
-import type { VercelKV } from "@vercel/kv";
+import type Redis from "ioredis";
 import moment from "moment";
 
 import { kvStore } from "@/server/lib/kv/Persistence";
@@ -38,7 +37,7 @@ type MyTicketType = {
   currentPhase: string;
   phaseTicketCount: number;
   ticketCount: number;
-  result: PhaseResult;
+  result: PhaseResult | undefined;
   txList: TicketType[];
   isWon: boolean | undefined;
   pool: PoolType;
@@ -97,10 +96,10 @@ enum ConstantField {
 }
 
 class LotteryService {
-  kv: VercelKV;
+  kv: Redis;
 
   constructor() {
-    this.kv = kvStore.getClient();
+    this.kv = kvStore.getClient() as Redis;
   }
 
   async poolState() {
@@ -110,12 +109,11 @@ class LotteryService {
 
     const poolList = new Array<PoolStateType>();
     for (const poolCode in poolRecord) {
-      const pool = { ...(poolRecord[poolCode] as PoolType) };
+      const pool = { ...(JSON.parse(poolRecord[poolCode]) as PoolType) };
       //####
       const currentKey = currentPhaseKeyRecord && (currentPhaseKeyRecord[poolCode] as string);
       const ticketCount =
-        currentKey &&
-        ((await this.kv.hget(currentKey, ConstantField.PHASE_TICKET_COUNT_FIELD)) as number);
+        currentKey && (await this.kv.hget(currentKey, ConstantField.PHASE_TICKET_COUNT_FIELD));
       //###
       const lastPhaseKey = lastPhaseKeyRecord && (lastPhaseKeyRecord[poolCode] as string);
       const lastPhase =
@@ -123,10 +121,10 @@ class LotteryService {
       //##
       const poolState: PoolStateType = {
         pool,
-        lastPhase: lastPhase ? (lastPhase as PhaseResult) : undefined,
+        lastPhase: lastPhase ? (JSON.parse(lastPhase) as PhaseResult) : undefined,
         currentPhase: {
           poolCode,
-          ticketCount: ticketCount as number,
+          ticketCount: ticketCount != null ? parseInt(ticketCount) : 0,
           currentPhase: currentKey ?? "No Start",
           lotteryResult: undefined,
           hitTicket: undefined,
@@ -144,11 +142,9 @@ class LotteryService {
     const currentPhase = await this.kv.hget(ConstantKey.LOTTERY_LAST_PHASE, poolCode);
 
     // 摇奖对比,获取池信息
-    const pool: PoolType | null = await this.kv.hget(ConstantKey.LOTTERY_POOLS, poolCode);
+    const pool = await this.kv.hget(ConstantKey.LOTTERY_POOLS, poolCode);
     //获取当前所有用户信息<txHash:
-    const phaseTickets: Record<string, TicketType> | null = await this.kv.hgetall(
-      currentPhase as string,
-    );
+    const phaseTickets = await this.kv.hgetall(currentPhase as string);
 
     //准备数据
     const ticketAndTxMap: Map<string, Array<string>> = new Map<string, Array<string>>();
@@ -160,29 +156,35 @@ class LotteryService {
       if (txHash.startsWith("PHASE_")) {
         continue;
       }
-      txAndAddressMap.set(txHash, phaseTickets[txHash].address);
-      phaseTickets[txHash].tickets.map((ticket) => {
+      const ticket = JSON.parse(phaseTickets[txHash]) as TicketType;
+      txAndAddressMap.set(txHash, ticket.address);
+      ticket.tickets.map((ticket) => {
         const txHashArray = ticketAndTxMap.get(ticket) ?? [];
         ticketAndTxMap.set(ticket, [txHash, ...txHashArray]);
       });
     }
+    const poolOjb = JSON.parse(pool) as PoolType;
     const hitTicket: string =
-      pool.difficulty == Difficulty.MATCH
+      poolOjb.difficulty == Difficulty.MATCH
         ? lotteryResult
         : this.__findClosestHexNumber([...ticketAndTxMap.keys()], lotteryResult);
     const hitTx = ticketAndTxMap.get(hitTicket);
     const hitAddr = hitTx?.map((tx) => txAndAddressMap.get(tx));
     //开奖号码
-    await this.kv.hsetnx(currentPhase as string, ConstantField.PHASE_RESULT_FIELD, {
-      poolCode,
-      currentPhase,
-      ticketCount: ticketAndTxMap.size,
-      lotteryResult,
-      hitTx,
-      hitAddr,
-      hitTicket,
-    } as PhaseResult);
-    return currentPhase as string;
+    await this.kv.hsetnx(
+      currentPhase as string,
+      ConstantField.PHASE_RESULT_FIELD,
+      JSON.stringify({
+        poolCode,
+        currentPhase,
+        ticketCount: ticketAndTxMap.size,
+        lotteryResult,
+        hitTx,
+        hitAddr,
+        hitTicket,
+      } as PhaseResult),
+    );
+    return currentPhase;
   }
 
   async createTicket(props: TicketType, refCode?: string) {
@@ -192,7 +194,7 @@ class LotteryService {
     }
     const ticketCount = props.tickets.length;
     //归入某期计数
-    await this.kv.hsetnx(currentPhase as string, props.txHash, { ...props });
+    await this.kv.hsetnx(currentPhase as string, props.txHash, JSON.stringify({ ...props }));
     await this.kv.hincrby(
       currentPhase as string,
       ConstantField.PHASE_TICKET_COUNT_FIELD,
@@ -200,7 +202,11 @@ class LotteryService {
     );
     //归入用户积分
     const userKey = this.getUserNamespace(props.address);
-    const result = await this.kv.hsetnx(userKey, props.txHash, { ...props, currentPhase });
+    const result = await this.kv.hsetnx(
+      userKey,
+      props.txHash,
+      JSON.stringify({ ...props, currentPhase }),
+    );
     await this.kv.hincrby(userKey, ConstantField.USER_POINT_SUM_FIELD, ticketCount * 100);
     if (refCode) {
       //保存我的推荐人

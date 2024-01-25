@@ -18,7 +18,7 @@ export const poolRouter = createTRPCRouter({
       const poolMap = await kvStore.list(ConstantKey.LOTTERY_POOLS);
       const poolList = new Array<PoolType>();
       for (const poolCode in poolMap) {
-        const p = { ...(poolMap[poolCode] as PoolType) };
+        const p = { ...(JSON.parse(poolMap[poolCode]) as PoolType) };
         poolList.push(p);
       }
       return { code: 200, message: "OK", result: poolList };

@@ -15,7 +15,7 @@ export const lotteryRouter = createTRPCRouter({
           input.poolCode,
           input.lotteryResult ?? lottery.randomHex(),
         );
-        return { code: 200, message: "ok", result: phase };
+        return { code: 200, message: "ok", result: phase ?? "" };
       } catch (error: unknown) {
         console.error("Error init");
         console.error(error);

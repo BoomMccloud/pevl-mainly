@@ -59,7 +59,7 @@ function Airdrop() {
         </StatGroup>
       </CardBody>
       <Center>
-        <Qr />
+        <Qr text={pointObj?.code} />
       </Center>
 
       <CardFooter

@@ -8,7 +8,7 @@ function Qr(props: { text?: string; [prop: string]: unknown }) {
   const { Canvas } = useQRCode();
   return (
     <Canvas
-      text={props.text ?? "https://github.com/bunlong/next-qrcode"}
+      text={`${window?.location?.origin}?referral=${props.text}`}
       options={{
         errorCorrectionLevel: "M",
         margin: 3,

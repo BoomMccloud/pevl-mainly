@@ -45,7 +45,6 @@ function MyTickets() {
   const records = data?.result as Record<string, MyTicketType>;
   const tickets = Object.values(records ?? {});
   tickets?.sort((a, b) => b.currentPhase.localeCompare(a.currentPhase));
-  console.log(records);
   return (
     <Box>
       <Heading as="h2" fontSize={"1.5rem"} mb={10} className="text-shadow">

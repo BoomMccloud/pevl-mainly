@@ -28,6 +28,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import moment from "moment/moment";
+import { FaSadCry } from "react-icons/fa";
 import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
@@ -94,14 +95,19 @@ function MyTickets() {
                       <StatNumber>
                         {(record.phaseTicketCount * record.pool.price).toFixed(3)} ETH
                       </StatNumber>
-                      <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                      <StatHelpText>{record.pool.name}</StatHelpText>
                     </Stat>
                   </Td>
                   <Td>
-                    {record.isWon ? (
-                      <Icon as={GiLaurelsTrophy} w={8} h={8} color="yellow.300" />
-                    ) : (
+                    {record.isWon == undefined ? (
                       <Countdown targetDate={nextTime(record.pool.period)} />
+                    ) : (
+                      <Icon
+                        as={record.isWon ? GiLaurelsTrophy : FaSadCry}
+                        w={8}
+                        h={8}
+                        color={record.isWon ? "yellow.300" : "red"}
+                      />
                     )}
                   </Td>
                 </Tr>

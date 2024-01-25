@@ -40,7 +40,7 @@ type MyTicketType = {
   ticketCount: number;
   result: PhaseResult;
   txList: TicketType[];
-  isWon: boolean;
+  isWon: boolean | undefined;
   pool: PoolType;
 };
 
@@ -146,23 +146,26 @@ class LotteryService {
     // 摇奖对比,获取池信息
     const pool: PoolType | null = await this.kv.hget(ConstantKey.LOTTERY_POOLS, poolCode);
     //获取当前所有用户信息<txHash:
-    const tickets: Record<string, TicketType> | null = await this.kv.hgetall(
+    const phaseTickets: Record<string, TicketType> | null = await this.kv.hgetall(
       currentPhase as string,
     );
 
     //准备数据
     const ticketAndTxMap: Map<string, Array<string>> = new Map<string, Array<string>>();
     const txAndAddressMap: Map<string, string> = new Map<string, string>();
-    if (!pool || !tickets) {
+    if (!pool || !phaseTickets) {
       return;
     }
-    Object.keys(tickets).map((txHash) => {
-      txAndAddressMap.set(txHash, tickets[txHash].address);
-      tickets[txHash].tickets.map((ticket) => {
+    for (const txHash in phaseTickets) {
+      if (txHash.startsWith("PHASE_")) {
+        continue;
+      }
+      txAndAddressMap.set(txHash, phaseTickets[txHash].address);
+      phaseTickets[txHash].tickets.map((ticket) => {
         const txHashArray = ticketAndTxMap.get(ticket) ?? [];
         ticketAndTxMap.set(ticket, [txHash, ...txHashArray]);
       });
-    });
+    }
     const hitTicket: string =
       pool.difficulty == Difficulty.MATCH
         ? lotteryResult

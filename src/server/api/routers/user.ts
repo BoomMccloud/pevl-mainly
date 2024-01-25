@@ -109,14 +109,14 @@ export const userRouter = createTRPCRouter({
             )) as PhaseResult;
             const txList: TicketType[] = [];
             const ticketCount = 0;
-            const isWon = false;
+            const isWon = undefined;
             const pool = poolMap[r[ticketTx].poolCode] as PoolType;
             obj = { currentPhase, phaseTicketCount, ticketCount, result, txList, isWon, pool };
           }
           const { txList, result } = obj;
           txList.push(r[ticketTx]);
           obj.ticketCount += r[ticketTx].tickets.length;
-          obj.isWon = result && result.hitAddr ? result.hitAddr.includes(input.address) : obj.isWon;
+          obj.isWon = Boolean(result) && result.hitAddr && result.hitAddr.includes(input.address);
           phaseMap[currentPhase] = obj;
         }
         return { code: 200, message: "OK", result: phaseMap };

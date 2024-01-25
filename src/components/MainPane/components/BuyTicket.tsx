@@ -9,10 +9,10 @@ import { api } from "@/trpc/react";
 const BuyTicket: FC = () => {
   const { data: poolData } = api.pool.poolStateList.useQuery();
   const pools = poolData?.result as Array<PoolStateType>;
-  console.log(pools);
+
   return (
     <Box p={{ xs: 2, sm: 4 }}>
-      <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={6}>
+      <Grid templateColumns="repeat(2, 1fr)" gap={6} mb={6}>
         {pools?.map((pool) => (
           <GridItem key={pool.pool.name} w="100%">
             <PoolCard {...pool} />

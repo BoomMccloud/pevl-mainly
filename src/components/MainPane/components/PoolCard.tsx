@@ -18,9 +18,11 @@ import {
 import { nanoid } from "nanoid";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
+import Countdown, { zeroPad } from "react-countdown";
 import { parseEther } from "viem";
 import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from "wagmi";
 
+import { nextTime } from "@/app/_util/util";
 import { ticketPath } from "@/components/Header/Header";
 import { CHAIN_CONFIG, FUND_WALLET_ADDRESS } from "@/const";
 import { useNotify } from "@/hooks";
@@ -28,8 +30,9 @@ import type { PoolStateType } from "@/server/lib/LotteryService";
 import { api } from "@/trpc/react";
 import { getEllipsisTxt } from "@/utils/formatters";
 
-export const PoolCard = ({ pool }: PoolStateType) => {
-  const { name, difficulty, price, poolCode } = pool;
+export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
+  const { name, difficulty, price, poolCode, period } = pool;
+
   const { data, error, isLoading, isError, sendTransaction } = useSendTransaction();
   const { data: receipt, isLoading: isPending } = useWaitForTransaction({ hash: data?.hash });
   const { notifyError, notifySuccess } = useNotify();
@@ -94,7 +97,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
   const handleTransfer = () => {
     sendTransaction({
       to: FUND_WALLET_ADDRESS,
-      value: parseEther((ticketAmount * 0.00001).toString()),
+      value: parseEther((ticketAmount * price).toString()),
     });
   };
 
@@ -118,13 +121,43 @@ export const PoolCard = ({ pool }: PoolStateType) => {
     }
   }, [receipt, isError, error]);
   return (
-    <Card maxW="sm">
+    <Card>
       <CardBody>
         <Stack mt="6" spacing="3" alignItems="stretch">
           <HStack justifyContent="center">
             <Heading size="md">{name}</Heading>
             <Tag colorScheme={difficulty === "MATCH" ? "red" : "green"}>{difficulty}</Tag>
           </HStack>
+
+          <Heading as="h2" fontSize={"2rem"} mb={4}>
+            Prize: {((currentPhase?.ticketCount ?? 0) * price).toFixed(3)} ETH
+          </Heading>
+          <Countdown
+            date={nextTime(period)}
+            zeroPadTime={2}
+            renderer={({ hours, minutes, seconds, completed }) => {
+              if (completed) {
+                // Render a completed state
+                return <span>Round Ended, go to ... to check if you win this round</span>;
+              } else {
+                // Render a countdown
+                return (
+                  <Heading as="h1" className="countdown" style={{ fontSize: 20 }}>
+                    🔥 {"Ends In: "}
+                    <span className="number">{zeroPad(hours)}</span>
+                    <span className="label">Hours</span>
+                    {" : "}
+                    <span className="number">{zeroPad(minutes)}</span>
+                    <span className="label">Minutes</span>
+                    {" : "}
+                    <span className="number">{zeroPad(seconds)}</span>
+                    <span className="label">Seconds</span>
+                    🔥
+                  </Heading>
+                );
+              }
+            }}
+          ></Countdown>
 
           <Text>Choose the number to tickets to buy</Text>
 

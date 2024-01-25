@@ -23,7 +23,6 @@ const MainPane: FC = () => {
       <Heading as="h2" fontSize={"2rem"} mb={10}>
         PEVL Games
       </Heading>
-      <Prize />
 
       {isConnected ? <BuyTicket /> : <ConnectButton />}
       {/* <LotteryMain /> */}

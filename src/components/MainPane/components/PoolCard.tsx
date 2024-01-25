@@ -15,7 +15,6 @@ import {
   Text,
   useNumberInput,
 } from "@chakra-ui/react";
-import { nanoid } from "nanoid";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import { parseEther } from "viem";
@@ -104,7 +103,7 @@ export const PoolCard = ({ pool }: PoolStateType) => {
         poolCode,
         ticketNum: ticketAmount,
         address: address as string,
-        txHash: nanoid(5),
+        txHash: receipt.transactionHash,
         txTime: new Date().getTime(),
         referral: searchParams.get("referral") ?? undefined,
       });

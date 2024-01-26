@@ -35,14 +35,9 @@ function Airdrop() {
   return (
     <>
       <VStack alignItems={"stretch"} maxW="md">
-        <Flex mb={4}>
-          <Flex flex="1" gap="4" alignItems="center">
-            <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-
-            <Heading size="sm">{pointObj?.code ?? "-"}</Heading>
-            <Button onClick={onCopy}>{hasCopied ? "Copied!" : "Copy"}</Button>
-          </Flex>
-        </Flex>
+      <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
+        Referrals
+      </Heading>
         <StatGroup mb={6}>
           <Stat>
             <StatLabel>Your Points</StatLabel>
@@ -57,13 +52,14 @@ function Airdrop() {
             <StatNumber>{pointObj?.refNum ?? 0}</StatNumber>
           </Stat>
         </StatGroup>
+        <text>Receive 50% of your referral's points and 25% of their referral's points with the link below:</text>
         <Center mb={6}>
-          <Qr text={pointObj?.code} />
+            <Button onClick={onCopy}>{hasCopied ? "Copied!" : "Copy Referral Link"}</Button>
         </Center>
         <Alert fontSize={"sm"}>
-          We believe that Blast will be looking for traction from projects when evaluating for the
-          hackathon. Also, we want to launch quickly, iron out bugs, and get initial user feedback.
-          To incentivize users, we will provide points when using Testnet.
+          Testnet points can win real prizes!
+          If PEVL wins Blast's BigBang competition, 1/3 of the Blast points
+          Will be airdropped to testnet users.
         </Alert>
       </VStack>
       {/* <Card maxW="md">

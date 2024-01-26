@@ -26,9 +26,9 @@ const BuyTicket: FC = () => {
         </Grid>
       )}
       <Text color="red">
-        Please avoid refreshing or clicking anything until the success dialog appears, to ensure
-        your ticket is secured.
+        Don't refresh or navigate away from this page until you see the confirmation message.
       </Text>
+      <Text></Text>
     </Box>
   );
 };

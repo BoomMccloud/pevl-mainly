@@ -194,7 +194,11 @@ class LotteryService {
     }
     const ticketCount = props.tickets.length;
     //归入某期计数
-    const nx = await this.kv.hsetnx(currentPhase as string, props.txHash, JSON.stringify({ ...props }));
+    const nx = await this.kv.hsetnx(
+      currentPhase as string,
+      props.txHash,
+      JSON.stringify({ ...props }),
+    );
     //repeat submitted
     if (nx != 1) {
       return false;

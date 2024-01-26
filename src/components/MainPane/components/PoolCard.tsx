@@ -11,7 +11,6 @@ import {
   Input,
   Link,
   Stack,
-  Tag,
   Text,
   useNumberInput,
   VStack,
@@ -32,7 +31,7 @@ import { api } from "@/trpc/react";
 import { getEllipsisTxt } from "@/utils/formatters";
 
 export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
-  const { name, difficulty, price, poolCode, period } = pool;
+  const { name, price, poolCode, period } = pool;
   const { isConnected } = useAccount();
 
   const { data, error, isLoading, isError, sendTransaction } = useSendTransaction();
@@ -121,14 +120,13 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
         message: error.message,
       });
     }
-  }, [receipt, isError, error]);
+  }, [receipt, isError, error]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Card>
       <CardBody>
         <Stack mt="6" spacing="3" alignItems="stretch">
           <HStack justifyContent="center">
             <Heading size="md">{name}</Heading>
-            <Tag colorScheme={difficulty === "MATCH" ? "red" : "green"}>{difficulty}</Tag>
           </HStack>
 
           <Heading as="h2" fontSize={"2rem"} mb={3}>
@@ -137,7 +135,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
           <Countdown
             date={nextTime(period)}
             zeroPadTime={2}
-            renderer={({ hours, minutes, seconds, completed }) => {
+            renderer={({ hours, minutes, completed }) => {
               if (completed) {
                 // Render a completed state
                 return <span>Round Ended, go to ... to check if you win this round</span>;
@@ -161,21 +159,21 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
                         MINS
                       </Text>
                     </VStack>
-                    <VStack gap={0}>
+                    {/* <VStack gap={0}>
                       <Heading as="h1" style={{ fontSize: 24 }}>
                         {zeroPad(seconds)}
                       </Heading>
                       <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
                         SECS
                       </Text>
-                    </VStack>
+                    </VStack> */}
                   </HStack>
                 );
               }
             }}
           ></Countdown>
 
-          <Text>Choose the number to tickets to buy</Text>
+          <Text>Number of Tickets</Text>
 
           <HStack mb={2}>
             <Button {...dec}>-</Button>
@@ -191,7 +189,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
               onClick={handleTransfer}
               isLoading={isLoading || isPending}
             >
-              Buy tickets
+              Enter The Drawing!
             </Button>
           ) : (
             <Box display="flex" justifyContent="center">
@@ -199,6 +197,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             </Box>
           )}
         </Stack>
+        <Text>Testnet PEVL points can win real Blast points. The raffle is verifiably random.</Text>
       </CardBody>
     </Card>
   );

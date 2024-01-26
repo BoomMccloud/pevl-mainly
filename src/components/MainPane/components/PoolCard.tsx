@@ -189,8 +189,9 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
           <HStack justifyContent="center">
             <Text>Expected Value {(price * Number(ticketAmount)).toFixed(4)} ETH + </Text>
             <HStack gap={0}>
+              <Text>{Number(ticketAmount) * 100}</Text>
               <Image src={logo.src} alt="logo" width={20} height={20} />
-              <Text>{price * Number(ticketAmount) * 100}</Text>
+              <Text> points</Text>
             </HStack>
           </HStack>
           {isConnected ? (
@@ -207,7 +208,6 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             </Box>
           )}
         </Stack>
-        <Text>Testnet PEVL points can win real Blast points. The raffle is verifiably random.</Text>
       </CardBody>
     </Card>
   );

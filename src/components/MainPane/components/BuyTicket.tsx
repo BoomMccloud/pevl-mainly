@@ -26,7 +26,7 @@ const BuyTicket: FC = () => {
         </Grid>
       )}
       <Text color="red">
-        Don't refresh or navigate away from this page until you see the confirmation message.
+        Don&apos;t refresh or navigate away from this page until you see the confirmation message.
       </Text>
       <Text></Text>
     </Box>

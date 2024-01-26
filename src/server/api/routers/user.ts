@@ -86,7 +86,7 @@ export const userRouter = createTRPCRouter({
     .query(async ({ input }): Promise<ResponseTPRC> => {
       try {
         const poolMap = await kvStore.list(ConstantKey.LOTTERY_POOLS);
-        const r = (await kvStore.list(lottery.getUserNamespace(input.address)));
+        const r = await kvStore.list(lottery.getUserNamespace(input.address));
         const phaseMap: Record<string, MyTicketType> = {};
         for (const ticketTx in r) {
           if (ticketTx.startsWith("USER_")) {
@@ -97,10 +97,14 @@ export const userRouter = createTRPCRouter({
           let obj = phaseMap[currentPhase];
           if (!obj) {
             //当前期总票数
-            const phaseTicketCountStr = await kvStore.get(currentPhase, ConstantField.PHASE_TICKET_COUNT_FIELD);
-            const phaseTicketCount = phaseTicketCountStr != null ? parseInt(phaseTicketCountStr) : 0;
+            const phaseTicketCountStr = await kvStore.get(
+              currentPhase,
+              ConstantField.PHASE_TICKET_COUNT_FIELD,
+            );
+            const phaseTicketCount =
+              phaseTicketCountStr != null ? parseInt(phaseTicketCountStr) : 0;
             const resultStr = await kvStore.get(currentPhase, ConstantField.PHASE_RESULT_FIELD);
-            const result = resultStr != null ? JSON.parse(resultStr) as PhaseResult : undefined;
+            const result = resultStr != null ? (JSON.parse(resultStr) as PhaseResult) : undefined;
             const txList: TicketType[] = [];
             const ticketCount = 0;
             const isWon = undefined;

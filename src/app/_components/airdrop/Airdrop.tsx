@@ -4,21 +4,18 @@ import { useEffect } from "react";
 
 import {
   Alert,
-  Avatar,
   Button,
   Center,
-  Flex,
   Heading,
   Stat,
   StatGroup,
   StatLabel,
   StatNumber,
-  VStack,
   useClipboard,
+  VStack,
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
-import Qr from "@/app/_components/Qr";
 import type { LotteryPointType } from "@/server/lib/LotteryService";
 import { api } from "@/trpc/react";
 
@@ -35,9 +32,9 @@ function Airdrop() {
   return (
     <>
       <VStack alignItems={"stretch"} maxW="md">
-      <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
-        Referrals
-      </Heading>
+        <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
+          Referrals
+        </Heading>
         <StatGroup mb={6}>
           <Stat>
             <StatLabel>Your Points</StatLabel>
@@ -52,14 +49,16 @@ function Airdrop() {
             <StatNumber>{pointObj?.refNum ?? 0}</StatNumber>
           </Stat>
         </StatGroup>
-        <text>Receive 50% of your referral's points and 25% of their referral's points with the link below:</text>
+        <text>
+          Receive 50% of your referral&apos;s points and 25% of their referral&apos;s points with
+          the link below:
+        </text>
         <Center mb={6}>
-            <Button onClick={onCopy}>{hasCopied ? "Copied!" : "Copy Referral Link"}</Button>
+          <Button onClick={onCopy}>{hasCopied ? "Copied!" : "Copy Referral Link"}</Button>
         </Center>
         <Alert fontSize={"sm"}>
-          Testnet points can win real prizes!
-          If PEVL wins Blast's BigBang competition, 1/3 of the Blast points
-          Will be airdropped to testnet users.
+          Testnet points can win real prizes! If PEVL wins Blast&apos;s BigBang competition, 1/3 of
+          the Blast points Will be airdropped to testnet users.
         </Alert>
       </VStack>
       {/* <Card maxW="md">

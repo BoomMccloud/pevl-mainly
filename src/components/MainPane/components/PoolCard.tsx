@@ -11,7 +11,6 @@ import {
   Input,
   Link,
   Stack,
-  Tag,
   Text,
   useNumberInput,
 } from "@chakra-ui/react";
@@ -31,7 +30,7 @@ import { api } from "@/trpc/react";
 import { getEllipsisTxt } from "@/utils/formatters";
 
 export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
-  const { name, difficulty, price, poolCode, period } = pool;
+  const { name, price, poolCode, period } = pool;
   const { isConnected } = useAccount();
 
   const { data, error, isLoading, isError, sendTransaction } = useSendTransaction();
@@ -120,7 +119,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
         message: error.message,
       });
     }
-  }, [receipt, isError, error]);
+  }, [receipt, isError, error]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Card>
       <CardBody>
@@ -135,7 +134,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
           <Countdown
             date={nextTime(period)}
             zeroPadTime={2}
-            renderer={({ hours, minutes, seconds, completed }) => {
+            renderer={({ hours, minutes, completed }) => {
               if (completed) {
                 // Render a completed state
                 return <span>Round Ended, go to ... to check if you win this round</span>;
@@ -145,8 +144,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
                   <Heading as="h1" className="countdown" style={{ fontSize: 20 }}>
                     {"Ends In: "}
                     <span className="number">{zeroPad(hours)}</span>
-                    <span className="label"> Hours</span>
-                    {" "}
+                    <span className="label"> Hours</span>&nbsp;
                     <span className="number">{zeroPad(minutes)}</span>
                     <span className="label"> Minutes</span>
                   </Heading>

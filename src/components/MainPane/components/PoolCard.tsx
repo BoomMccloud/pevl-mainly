@@ -127,7 +127,6 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
         <Stack mt="6" spacing="3" alignItems="stretch">
           <HStack justifyContent="center">
             <Heading size="md">{name}</Heading>
-            <Tag colorScheme={difficulty === "MATCH" ? "red" : "green"}>{difficulty}</Tag>
           </HStack>
 
           <Heading as="h2" fontSize={"2rem"} mb={4}>
@@ -144,23 +143,19 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
                 // Render a countdown
                 return (
                   <Heading as="h1" className="countdown" style={{ fontSize: 20 }}>
-                    🔥 {"Ends In: "}
+                    {"Ends In: "}
                     <span className="number">{zeroPad(hours)}</span>
-                    <span className="label">Hours</span>
-                    {" : "}
+                    <span className="label"> Hours</span>
+                    {" "}
                     <span className="number">{zeroPad(minutes)}</span>
-                    <span className="label">Minutes</span>
-                    {" : "}
-                    <span className="number">{zeroPad(seconds)}</span>
-                    <span className="label">Seconds</span>
-                    🔥
+                    <span className="label"> Minutes</span>
                   </Heading>
                 );
               }
             }}
           ></Countdown>
 
-          <Text>Choose the number to tickets to buy</Text>
+          <Text>Number of Tickets</Text>
 
           <HStack mb={2}>
             <Button {...dec}>-</Button>
@@ -176,7 +171,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
               onClick={handleTransfer}
               isLoading={isLoading || isPending}
             >
-              Buy tickets
+              Enter The Drawing!
             </Button>
           ) : (
             <Box display="flex" justifyContent="center">
@@ -184,6 +179,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             </Box>
           )}
         </Stack>
+        <Text>Testnet PEVL points can win real Blast points. The raffle is verifiably random.</Text>
       </CardBody>
     </Card>
   );

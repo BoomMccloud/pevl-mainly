@@ -14,6 +14,7 @@ import {
   Tag,
   Text,
   useNumberInput,
+  VStack,
 } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import NextLink from "next/link";
@@ -130,7 +131,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             <Tag colorScheme={difficulty === "MATCH" ? "red" : "green"}>{difficulty}</Tag>
           </HStack>
 
-          <Heading as="h2" fontSize={"2rem"} mb={4}>
+          <Heading as="h2" fontSize={"2rem"} mb={3}>
             Prize: {((currentPhase?.ticketCount ?? 0) * price).toFixed(3)} ETH
           </Heading>
           <Countdown
@@ -143,18 +144,32 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
               } else {
                 // Render a countdown
                 return (
-                  <Heading as="h1" className="countdown" style={{ fontSize: 20 }}>
-                    🔥 {"Ends In: "}
-                    <span className="number">{zeroPad(hours)}</span>
-                    <span className="label">Hours</span>
-                    {" : "}
-                    <span className="number">{zeroPad(minutes)}</span>
-                    <span className="label">Minutes</span>
-                    {" : "}
-                    <span className="number">{zeroPad(seconds)}</span>
-                    <span className="label">Seconds</span>
-                    🔥
-                  </Heading>
+                  <HStack justifyContent="center">
+                    <VStack gap={0}>
+                      <Heading as="h1" style={{ fontSize: 24 }}>
+                        {zeroPad(hours)}
+                      </Heading>
+                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                        HRS
+                      </Text>
+                    </VStack>
+                    <VStack gap={0}>
+                      <Heading as="h1" style={{ fontSize: 24 }}>
+                        {zeroPad(minutes)}
+                      </Heading>
+                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                        MINS
+                      </Text>
+                    </VStack>
+                    <VStack gap={0}>
+                      <Heading as="h1" style={{ fontSize: 24 }}>
+                        {zeroPad(seconds)}
+                      </Heading>
+                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                        SECS
+                      </Text>
+                    </VStack>
+                  </HStack>
                 );
               }
             }}

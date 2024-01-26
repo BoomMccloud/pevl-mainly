@@ -16,8 +16,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Image from "next/image";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
+import logo from "public/img/logo-transparent.svg";
 import Countdown, { zeroPad } from "react-countdown";
 import { parseEther } from "viem";
 import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from "wagmi";
@@ -183,6 +185,14 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             </Button>
           </HStack>
           <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
+
+          <HStack justifyContent="center">
+            <Text>Expected Value {(price * Number(ticketAmount)).toFixed(4)} ETH + </Text>
+            <HStack gap={0}>
+              <Image src={logo.src} alt="logo" width={20} height={20} />
+              <Text>{price * Number(ticketAmount) * 100}</Text>
+            </HStack>
+          </HStack>
           {isConnected ? (
             <Button
               className="custom-button"

@@ -24,7 +24,7 @@ export const routes = [
     icon: <EmailIcon />,
   },
   {
-    title: "Referrals",
+    title: "Airdrops",
     path: "/referrals",
     icon: <EmailIcon />,
   },

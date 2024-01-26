@@ -127,7 +127,6 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
         <Stack mt="6" spacing="3" alignItems="stretch">
           <HStack justifyContent="center">
             <Heading size="md">{name}</Heading>
-            <Tag colorScheme={difficulty === "MATCH" ? "red" : "green"}>{difficulty}</Tag>
           </HStack>
 
           <Heading as="h2" fontSize={"2rem"} mb={4}>

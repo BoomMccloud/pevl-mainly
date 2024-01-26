@@ -28,7 +28,10 @@ const BuyTicket: FC = () => {
       <Text color="red">
         Don&apos;t refresh or navigate away from this page until you see the confirmation message.
       </Text>
-      <Text></Text>
+      <Text>
+        Testnet PEVL points can win real Blast points. The raffle is verifiably random{" "}
+        <a href="https://pevl.gitbook.io/pevl/our-games/daily-raffle"> (Learn more).</a>
+      </Text>
     </Box>
   );
 };

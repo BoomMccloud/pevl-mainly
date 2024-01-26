@@ -121,9 +121,9 @@ export const TicketTable: React.FC = () => {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>Phase</Th>
+                <Th>Draw Number</Th>
                 <Th>Bet</Th>
-                <Th>Prize Pool</Th>
+                <Th>Prize</Th>
                 <Th>Result</Th>
               </Tr>
             </Thead>

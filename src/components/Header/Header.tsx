@@ -1,7 +1,7 @@
 "use client";
 import { type FC } from "react";
 
-import { EmailIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, SettingsIcon, StarIcon, UnlockIcon } from "@chakra-ui/icons";
 import { Button, HStack } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -16,17 +16,17 @@ export const routes = [
   {
     title: "Games",
     path: "/",
-    icon: <EmailIcon />,
+    icon: <StarIcon />,
   },
   {
     title: "Tickets",
     path: ticketPath,
-    icon: <EmailIcon />,
+    icon: <CheckCircleIcon />,
   },
   {
     title: "Airdrops",
     path: "/referrals",
-    icon: <EmailIcon />,
+    icon: <SettingsIcon />,
   },
 
   ...(process.env.NODE_ENV === "development"
@@ -34,7 +34,7 @@ export const routes = [
         {
           title: "Debugger",
           path: "/debugger",
-          icon: <EmailIcon />,
+          icon: <UnlockIcon />,
         },
       ]
     : []),

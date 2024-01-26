@@ -1,17 +1,17 @@
 import { Difficulty, type PoolType } from "@/server/lib/LotteryService";
 
 const InitPoolConfig: Record<string, { prop: PoolType; wallet: [string, string] }> = {
-  "System-PowerBlast-0001": {
-    prop: {
-      name: "PowerBlast",
-      poolCode: "System-PowerBlast-0001",
-      difficulty: Difficulty.MATCH,
-      period: "*/30 * * * *",
-      price: 0.1,
-      prize: 50,
-    },
-    wallet: ["", ""],
-  },
+  // "System-PowerBlast-0001": {
+  //   prop: {
+  //     name: "PowerBlast",
+  //     poolCode: "System-PowerBlast-0001",
+  //     difficulty: Difficulty.MATCH,
+  //     period: "*/30 * * * *",
+  //     price: 0.1,
+  //     prize: 50,
+  //   },
+  //   wallet: ["", ""],
+  // },
   "System-DailyLotto-0002": {
     prop: {
       name: "Daily Jolt",

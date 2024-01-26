@@ -16,11 +16,11 @@ const open_sans = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "PEVL",
-  applicationName: "Next Web3 Boilerplate",
-  description: "Next.js Web3 boilerplate built on Wagmi, Viem, and Rainbow",
+  applicationName: "PEVL Fair Lottery",
+  description: "A 100% verifible onchain lottery that is EV+",
   authors: {
-    name: "Pedrojok01",
-    url: "https://github.com/Pedrojok01/Next-Web3-Boilerplate",
+    name: "PEVL Team",
+    url: "pevl.xyz",
   },
   themeColor: "dark",
   viewport: "width=device-width, initial-scale=1",

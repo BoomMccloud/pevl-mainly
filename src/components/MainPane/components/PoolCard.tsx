@@ -13,10 +13,13 @@ import {
   Stack,
   Text,
   useNumberInput,
+  VStack,
 } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Image from "next/image";
 import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
+import logo from "public/img/logo-transparent.svg";
 import Countdown, { zeroPad } from "react-countdown";
 import { parseEther } from "viem";
 import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from "wagmi";
@@ -128,7 +131,7 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             <Heading size="md">{name}</Heading>
           </HStack>
 
-          <Heading as="h2" fontSize={"2rem"} mb={4}>
+          <Heading as="h2" fontSize={"2rem"} mb={3}>
             Prize: {((currentPhase?.ticketCount ?? 0) * price).toFixed(3)} ETH
           </Heading>
           <Countdown
@@ -141,13 +144,32 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
               } else {
                 // Render a countdown
                 return (
-                  <Heading as="h1" className="countdown" style={{ fontSize: 20 }}>
-                    {"Ends In: "}
-                    <span className="number">{zeroPad(hours)}</span>
-                    <span className="label"> Hours</span>&nbsp;
-                    <span className="number">{zeroPad(minutes)}</span>
-                    <span className="label"> Minutes</span>
-                  </Heading>
+                  <HStack justifyContent="center">
+                    <VStack gap={0}>
+                      <Heading as="h1" style={{ fontSize: 24 }}>
+                        {zeroPad(hours)}
+                      </Heading>
+                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                        HRS
+                      </Text>
+                    </VStack>
+                    <VStack gap={0}>
+                      <Heading as="h1" style={{ fontSize: 24 }}>
+                        {zeroPad(minutes)}
+                      </Heading>
+                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                        MINS
+                      </Text>
+                    </VStack>
+                    {/* <VStack gap={0}>
+                      <Heading as="h1" style={{ fontSize: 24 }}>
+                        {zeroPad(seconds)}
+                      </Heading>
+                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                        SECS
+                      </Text>
+                    </VStack> */}
+                  </HStack>
                 );
               }
             }}
@@ -163,6 +185,14 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
             </Button>
           </HStack>
           <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
+
+          <HStack justifyContent="center">
+            <Text>Expected Value {(price * Number(ticketAmount)).toFixed(4)} ETH + </Text>
+            <HStack gap={0}>
+              <Image src={logo.src} alt="logo" width={20} height={20} />
+              <Text>{price * Number(ticketAmount) * 100}</Text>
+            </HStack>
+          </HStack>
           {isConnected ? (
             <Button
               className="custom-button"

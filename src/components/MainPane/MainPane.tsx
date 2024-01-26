@@ -16,8 +16,8 @@ const MainPane: FC = () => {
       className={styles.container}
       border={colorMode === "light" ? "none" : "1px solid rgba(152, 161, 192, 0.24)"}
     >
-      <Heading as="h2" fontSize={"2rem"} mb={10}>
-        Try One Of Our Games Below!
+      <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
+        Try your luck with our 100% fair raffle!
       </Heading>
       <BuyTicket />
       {/* {isConnected ? : <ConnectButton />} */}

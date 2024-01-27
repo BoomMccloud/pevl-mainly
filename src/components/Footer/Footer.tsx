@@ -11,7 +11,17 @@ const Footer: FC = () => {
   const currentPath = usePathname();
 
   return (
-    <Box as="footer" p={"1rem"} position="sticky" bottom={0} zIndex={10} textAlign={"center"}>
+    <Box
+      as="footer"
+      p={"1rem"}
+      position="fixed"
+      left={0}
+      right={0}
+      bottom={0}
+      zIndex={10}
+      textAlign={"center"}
+      bg="#1A202C"
+    >
       <HStack justifyContent="space-around">
         {routes.map(({ title, path, icon }) => {
           return (

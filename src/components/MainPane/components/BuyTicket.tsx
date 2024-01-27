@@ -1,6 +1,6 @@
 import { type FC } from "react";
 
-import { Box, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Spinner, Text, Link as ChakraLink } from "@chakra-ui/react";
 
 import { PoolCard } from "@/components/MainPane/components/PoolCard";
 import type { PoolStateType } from "@/server/lib/LotteryTypes";
@@ -30,7 +30,14 @@ const BuyTicket: FC = () => {
       </Text>
       <Text>
         Testnet PEVL points can win real Blast points. The raffle is verifiably random{" "}
-        <a href="https://pevl.gitbook.io/pevl/our-games/daily-raffle"> (Learn more).</a>
+        <ChakraLink
+          color="yellow"
+          as={"a"}
+          href="https://pevl.gitbook.io/pevl/our-games/daily-raffle"
+        >
+          {" "}
+          (Learn more).
+        </ChakraLink>
       </Text>
     </Box>
   );

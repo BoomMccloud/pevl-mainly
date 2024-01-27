@@ -28,7 +28,11 @@ export function Providers({ children }: { children: ReactNode }) {
         <ChakraProvider resetCSS theme={theme}>
           <RainbowKitProvider coolMode chains={chains} appInfo={appInfo}>
             {mounted && (
-              <Flex flexDirection="column" minHeight="100vh">
+              <Flex
+                flexDirection="column"
+                minHeight={isTablet ? "calc(100vh - 80px)" : "100vh"}
+                pb={20}
+              >
                 <Header />
 
                 <Box as="main" flex={1} p={4}>

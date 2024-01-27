@@ -54,10 +54,16 @@ export const TicketTable: React.FC = () => {
   tickets?.sort((a, b) => b.currentPhase.localeCompare(a.currentPhase));
 
   const handleTransfer = api.user.claimPrize.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       notifySuccess({
         title: "Submitted Claim!",
-        message: <>Please waiting for a few moment refresh page</>,
+        message: (
+          <>
+            <Link href={`${CHAIN_CONFIG[chain!.id].blockExplorer}/tx/${data.result}`} isExternal>
+              <Tag>Claimed ,Click Me</Tag>
+            </Link>
+          </>
+        ),
       });
     },
     onError: (error) => {

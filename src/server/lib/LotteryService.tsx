@@ -122,42 +122,38 @@ class LotteryService {
   }
 
   async claimPrize(address: string, phase: string) {
-    const commander = this.kv.pipeline();
-    commander.hget(phase, ConstantField.PHASE_RESULT_FIELD, async (err, result) => {
-      if (err) {
-        console.error(err);
-      }
-      if (result) {
-        const phaseResult = JSON.parse(result) as PhaseResult;
-        const { hitAddr, poolCode, ticketCount, claimed } = phaseResult;
-        const { prop, wallet } = InitPoolConfig[poolCode];
-        const account = privateKeyToAccount(wallet as `0x${string}`);
-        if (hitAddr?.includes(address) && !(claimed && claimed[address])) {
-          const prize = (ticketCount * prop.price) / hitAddr?.length;
-          const walletClient = createWalletClient({
-            account,
-            chain: sepoliaBlast,
-            transport: http(),
-          });
-          const txHash = (await walletClient.sendTransaction({
-            to: address as `0x${string}`,
-            value: parseUnits(prize.toString(), sepoliaBlast.nativeCurrency.decimals),
-          })) as string;
-          await this.kv.hset(
-            phase,
-            ConstantField.PHASE_RESULT_FIELD,
-            JSON.stringify({
-              ...phaseResult,
-              claimed: { claimed, [address]: txHash },
-            }),
-          );
-          return txHash;
-        }
-      }
+    const result = await this.kv.hget(phase, ConstantField.PHASE_RESULT_FIELD);
+    if (!result) {
+      console.error("Not Date", address, phase);
       return undefined;
-    });
-    const result = await commander.exec();
-    return result && result[0] ? (result[0][1] as string) : undefined;
+    }
+    const phaseResult = JSON.parse(result) as PhaseResult;
+    const { hitAddr, poolCode, ticketCount, claimed } = phaseResult;
+    const { prop, wallet } = InitPoolConfig[poolCode];
+    const account = privateKeyToAccount(wallet as `0x${string}`);
+    if (hitAddr?.includes(address) && !(claimed && claimed[address])) {
+      const prize = (ticketCount * prop.price) / hitAddr?.length;
+      const walletClient = createWalletClient({
+        account,
+        chain: sepoliaBlast,
+        transport: http(),
+      });
+      const txHash = (await walletClient.sendTransaction({
+        to: address as `0x${string}`,
+        value: parseUnits(prize.toString(), sepoliaBlast.nativeCurrency.decimals),
+      })) as string;
+      await this.kv.hset(
+        phase,
+        ConstantField.PHASE_RESULT_FIELD,
+        JSON.stringify({
+          ...phaseResult,
+          claimed: { claimed, [address]: txHash },
+        }),
+      );
+      return txHash;
+    }
+    console.error("Not Hit", address, phase);
+    return undefined;
   }
 
   async createTicket(props: TicketType) {

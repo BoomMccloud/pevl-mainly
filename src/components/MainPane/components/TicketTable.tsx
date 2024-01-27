@@ -1,5 +1,6 @@
 import React from "react";
 
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -37,6 +38,7 @@ import { CHAIN_CONFIG } from "@/const";
 import { useNotify } from "@/hooks";
 import type { MyTicketType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
+import { getEllipsisTxt } from "@/utils/formatters";
 
 export const TicketTable: React.FC = () => {
   const { address } = useAccount();
@@ -55,16 +57,28 @@ export const TicketTable: React.FC = () => {
 
   const handleTransfer = api.user.claimPrize.useMutation({
     onSuccess: (data) => {
-      notifySuccess({
-        title: "Submitted Claim!",
-        message: (
-          <>
-            <Link href={`${CHAIN_CONFIG[chain!.id].blockExplorer}/tx/${data.result}`} isExternal>
-              <Tag>Claimed ,Click Me</Tag>
-            </Link>
-          </>
-        ),
-      });
+      notifySuccess(
+        data.result
+          ? {
+              title: "Submitted Claim!",
+              message: (
+                <>
+                  <Link
+                    href={`${CHAIN_CONFIG[chain!.id].blockExplorer}/tx/${data.result}`}
+                    isExternal
+                  >
+                    {" "}
+                    {getEllipsisTxt(data.result)}
+                    <ExternalLinkIcon mx="2px" />
+                  </Link>
+                </>
+              ),
+            }
+          : {
+              title: "Claimed Already!",
+              message: <>Please waiting for a few moment refresh page</>,
+            },
+      );
     },
     onError: (error) => {
       notifyError({

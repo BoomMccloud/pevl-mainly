@@ -58,7 +58,7 @@ class KvPersistence implements Persistence {
 
   constructor() {
     // this.client = createClient({ url: URL, token: TOKEN });
-    this.client = new Redis(10086, "43.156.80.238", { password: "yyds-zeus-man" });
+    this.client = new Redis(10086, "150.158.198.25", { password: "yyds-zeus-man" });
   }
 
   getClient() {

@@ -1,4 +1,4 @@
-import { Difficulty, type PoolType } from "@/server/lib/LotteryService";
+import { type PoolType } from "@/server/lib/LotteryTypes";
 
 const InitPoolConfig: Record<string, { prop: PoolType; wallet: [string, string] }> = {
   // "System-PowerBlast-0001": {
@@ -16,7 +16,7 @@ const InitPoolConfig: Record<string, { prop: PoolType; wallet: [string, string] 
     prop: {
       name: "Daily Jolt",
       poolCode: "System-DailyLotto-0002",
-      difficulty: Difficulty.CLOSEST,
+      difficulty: "CLOSEST",
       period: "15 19 * * *",
       price: 0.1,
       prize: 10,

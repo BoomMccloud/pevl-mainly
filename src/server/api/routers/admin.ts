@@ -1,7 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { kvStore } from "@/server/lib/kv/Persistence";
-import { ConstantKey, type ResponseTPRC } from "@/server/lib/LotteryService";
-import InitPoolConfig from "@/server/lib/PoolConfig";
+import { lottery } from "@/server/lib/LotteryService";
+import { type ResponseTPRC } from "@/server/lib/LotteryTypes";
 
 export const adminRouter = createTRPCRouter({
   /**
@@ -9,12 +9,8 @@ export const adminRouter = createTRPCRouter({
    */
   initPool: publicProcedure.mutation(async (): Promise<ResponseTPRC> => {
     try {
-      await kvStore.clean("LOTTERY*");
-      const initPool: Record<string, string> = {};
-      for (const key in InitPoolConfig) {
-        initPool[key] = JSON.stringify(InitPoolConfig[key].prop);
-      }
-      const r1 = await kvStore.save(ConstantKey.LOTTERY_POOLS, initPool);
+      const r1 = await kvStore.clean("LOTTERY*");
+      await lottery.init();
       return { code: 200, message: "OK", result: r1 };
     } catch (error: unknown) {
       console.log("Admin tsx Error init", error);

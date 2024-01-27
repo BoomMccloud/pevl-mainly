@@ -18,7 +18,6 @@ import {
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import NextLink from "next/link";
-import { useSearchParams } from "next/navigation";
 import logo from "public/img/logo-transparent.svg";
 import Countdown, { zeroPad } from "react-countdown";
 import { parseEther } from "viem";
@@ -28,7 +27,7 @@ import { nextTime } from "@/app/_util/util";
 import { ticketPath } from "@/components/Header/Header";
 import { CHAIN_CONFIG, FUND_WALLET_ADDRESS } from "@/const";
 import { useNotify } from "@/hooks";
-import type { PoolStateType } from "@/server/lib/LotteryService";
+import type { PoolStateType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 import { getEllipsisTxt } from "@/utils/formatters";
 
@@ -40,7 +39,6 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
   const { data: receipt, isLoading: isPending } = useWaitForTransaction({ hash: data?.hash });
   const { notifyError, notifySuccess } = useNotify();
   const { address } = useAccount();
-  const searchParams = useSearchParams();
   const { chain } = useNetwork();
 
   const saveOrUpdate = api.user.saveTickets.useMutation({
@@ -112,7 +110,6 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
         address: address as string,
         txHash: receipt.transactionHash,
         txTime: new Date().getTime(),
-        referral: searchParams.get("referral") ?? undefined,
       });
     }
 

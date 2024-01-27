@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
-import type { LotteryPointType } from "@/server/lib/LotteryService";
+import type { LotteryPointType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 
 function Airdrop() {

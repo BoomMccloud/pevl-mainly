@@ -33,7 +33,7 @@ import { GiLaurelsTrophy } from "react-icons/gi";
 import { useAccount } from "wagmi";
 
 import { nextTime } from "@/app/_util/util";
-import type { MyTicketType } from "@/server/lib/LotteryService";
+import type { MyTicketType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 
 import Countdown from "../Countdown";

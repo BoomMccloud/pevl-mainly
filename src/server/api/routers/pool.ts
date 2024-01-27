@@ -1,13 +1,9 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { kvStore } from "@/server/lib/kv/Persistence";
-import {
-  ConstantKey,
-  lottery,
-  type PoolType,
-  type ResponseTPRC,
-} from "@/server/lib/LotteryService";
+import { lottery } from "@/server/lib/LotteryService";
+import { type PoolType, type ResponseTPRC } from "@/server/lib/LotteryTypes";
+import InitPoolConfig from "@/server/lib/PoolConfig";
 
 export const poolRouter = createTRPCRouter({
   /**
@@ -15,11 +11,10 @@ export const poolRouter = createTRPCRouter({
    */
   poolList: publicProcedure.query(async (): Promise<ResponseTPRC> => {
     try {
-      const poolMap = await kvStore.list(ConstantKey.LOTTERY_POOLS);
+      const poolRecord = InitPoolConfig;
       const poolList = new Array<PoolType>();
-      for (const poolCode in poolMap) {
-        const p = { ...(JSON.parse(poolMap[poolCode]) as PoolType) };
-        poolList.push(p);
+      for (const poolCode in poolRecord) {
+        poolList.push(poolRecord[poolCode].prop);
       }
       return { code: 200, message: "OK", result: poolList };
     } catch (error: unknown) {

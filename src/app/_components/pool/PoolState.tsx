@@ -22,7 +22,7 @@ import { useAccount } from "wagmi";
 
 import Countdown from "@/app/_components/Countdown";
 import { nextTime } from "@/app/_util/util";
-import type { PhaseResult, PoolType } from "@/server/lib/LotteryService";
+import type { PhaseResult, PoolType } from "@/server/lib/LotteryTypes";
 
 function PoolState(props: { title: string; pool: PoolType; phaseResult: PhaseResult | undefined }) {
   const { address } = useAccount();

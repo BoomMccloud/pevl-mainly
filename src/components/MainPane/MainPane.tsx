@@ -1,7 +1,7 @@
 // components/MainPane.tsx
 import { type FC } from "react";
 
-import { Box, Heading, useColorMode } from "@chakra-ui/react";
+import { Box, Center, Heading, useColorMode } from "@chakra-ui/react";
 
 // import LotteryMain from "@/app/_components/LotteryMain";
 import styles from "@/styles/mainPane.module.css";
@@ -19,7 +19,10 @@ const MainPane: FC = () => {
       <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
         Try your luck with our 100% fair raffle!
       </Heading>
-      <BuyTicket />
+      <Center>
+        <BuyTicket />
+      </Center>
+
       {/* {isConnected ? : <ConnectButton />} */}
       {/* <LotteryMain /> */}
     </Box>

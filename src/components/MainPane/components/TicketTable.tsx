@@ -30,7 +30,7 @@ import { useAccount } from "wagmi";
 
 import Countdown from "@/app/_components/Countdown";
 import { nextTime } from "@/app/_util/util";
-import type { MyTicketType } from "@/server/lib/LotteryService";
+import type { MyTicketType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 
 export const TicketTable: React.FC = () => {

@@ -22,21 +22,19 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { nanoid } from "nanoid";
-import { useSearchParams } from "next/navigation";
 import { useAccount } from "wagmi";
 
-import { type PoolStateType } from "@/server/lib/LotteryService";
+import { type PoolStateType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 
 function CreateTicket(props: {
   poolStateList: Array<PoolStateType>;
   [propNames: string]: unknown;
 }) {
-  const searchParams = useSearchParams();
   const { isConnected, address } = useAccount();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [buyParam, setBuyParam] = useState({
-    poolCode: "System-PowerBlast-0001",
+    poolCode: "System-DailyLotto-0002",
     ticketNum: 1,
   });
 
@@ -57,7 +55,6 @@ function CreateTicket(props: {
       address,
       txHash: nanoid(5),
       txTime: new Date().getTime(),
-      referral: searchParams.get("referral") ?? undefined,
     });
   };
 

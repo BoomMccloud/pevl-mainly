@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import logo from "public/img/logo-with-text-transparent.svg";
 
+import { useSignIn } from "@/hooks/useSignIn";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 export const ticketPath = "/tickets";
@@ -43,6 +44,7 @@ export const routes = [
 const Header: FC = () => {
   const { isTablet } = useWindowSize();
   const router = useRouter();
+  useSignIn();
 
   return (
     <HStack

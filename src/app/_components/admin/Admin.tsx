@@ -15,7 +15,7 @@ import {
   Tag,
 } from "@chakra-ui/react";
 
-import { type PoolType } from "@/server/lib/LotteryService";
+import { type PoolType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 
 function Admin() {

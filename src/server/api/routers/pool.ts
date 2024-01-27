@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { lottery } from "@/server/lib/LotteryService";
 import { type PoolType, type ResponseTPRC } from "@/server/lib/LotteryTypes";
-import InitPoolConfig from "@/server/lib/PoolConfig";
+import { InitPoolConfig } from "@/server/lib/PoolConfig";
 
 export const poolRouter = createTRPCRouter({
   /**

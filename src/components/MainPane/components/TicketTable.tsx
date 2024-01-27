@@ -2,7 +2,10 @@ import React from "react";
 
 import {
   Box,
+  Button,
+  Flex,
   Icon,
+  Link,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -10,6 +13,7 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
+  Spinner,
   Stat,
   StatHelpText,
   StatNumber,
@@ -21,22 +25,23 @@ import {
   Th,
   Thead,
   Tr,
-  Spinner,
-  Button,
 } from "@chakra-ui/react";
 import moment from "moment";
 import { FaSadCry } from "react-icons/fa";
 import { GiLaurelsTrophy } from "react-icons/gi";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 
 import Countdown from "@/app/_components/Countdown";
 import { nextTime } from "@/app/_util/util";
+import { CHAIN_CONFIG } from "@/const";
+import { useNotify } from "@/hooks";
 import type { MyTicketType } from "@/server/lib/LotteryTypes";
 import { api } from "@/trpc/react";
 
 export const TicketTable: React.FC = () => {
   const { address } = useAccount();
-
+  const { notifyError, notifySuccess } = useNotify();
+  const { chain } = useNetwork();
   const { data, isLoading } = api.user.ticketsList.useQuery(
     { address: address as string },
     { enabled: !!address },
@@ -47,72 +52,24 @@ export const TicketTable: React.FC = () => {
   const records = data?.result as Record<string, MyTicketType>;
   const tickets = Object.values(records ?? {});
   tickets?.sort((a, b) => b.currentPhase.localeCompare(a.currentPhase));
-  //
-  // const records = data?.result as Record<string, TicketType>;
-  // const tickets = Object.values(records ?? {});
-  //
-  // const poolDetails = pools?.reduce(
-  //   (acc, pool) => {
-  //     acc[pool.poolCode] = pool;
-  //     return acc;
-  //   },
-  //   {} as Record<string, PoolType>,
-  // );
-  // console.log(tickets);
-  // const mergeTickets = tickets.reduce(
-  //   (acc, ticket) => {
-  //     console.log("acc", acc);
-  //     const key = ticket.currentPhase + ticket.poolCode;
-  //     if (acc[key]) {
-  //       console.log("concat", ticket.tickets);
-  //       acc[key].tickets = acc[key].tickets.concat(ticket.tickets);
-  //     } else {
-  //       acc[key] = ticket;
-  //     }
-  //     return acc;
-  //   },
-  //   {} as Record<string, TicketType>,
-  // );
-  //
-  // console.log(mergeTickets);
-  //
-  // const sortedTickets = Object.values(mergeTickets).sort((a, b) =>
-  //   a.currentPhase.slice(-14) > b.currentPhase.slice(-14) ? 1 : -1,
-  // );
-  // console.log(sortedTickets);
+
+  const handleTransfer = api.user.claimPrize.useMutation({
+    onSuccess: () => {
+      notifySuccess({
+        title: "Submitted Claim!",
+        message: <>Please waiting for a few moment refresh page</>,
+      });
+    },
+    onError: (error) => {
+      notifyError({
+        title: "Purchase Failed:",
+        message: error.message,
+      });
+    },
+  });
+
   return (
     <>
-      {/*<TableContainer>*/}
-      {/*  <Table variant="simple">*/}
-      {/*    <Thead>*/}
-      {/*      <Tr>*/}
-      {/*        <Th>Phase</Th>*/}
-      {/*        <Th>Ticket Hash</Th>*/}
-      {/*        <Th>Pool</Th>*/}
-      {/*        <Th isNumeric>Status</Th>*/}
-      {/*      </Tr>*/}
-      {/*    </Thead>*/}
-      {/*    <Tbody>*/}
-      {/*      {poolDetails &&*/}
-      {/*        sortedTickets.map((ticket) => {*/}
-      {/*          return (*/}
-      {/*            <Tr key={ticket.txHash}>*/}
-      {/*              <Td>{ticket.currentPhase?.slice(-14)}</Td>*/}
-      {/*              <Td>*/}
-      {/*                <Flex flexWrap="wrap" gap={3}>*/}
-      {/*                  {ticket.tickets.map((ticket) => (*/}
-      {/*                    <Tag key={ticket}>{ticket}</Tag>*/}
-      {/*                  ))}*/}
-      {/*                </Flex>*/}
-      {/*              </Td>*/}
-      {/*              <Td>{poolDetails[ticket.poolCode]?.name}</Td>*/}
-      {/*              <Td isNumeric>status</Td>*/}
-      {/*            </Tr>*/}
-      {/*          );*/}
-      {/*        })}*/}
-      {/*    </Tbody>*/}
-      {/*  </Table>*/}
-      {/*</TableContainer>*/}
       {isLoading ? (
         <Box display="flex" justifyContent="center" alignItems="center" height="300px">
           <Spinner color="yellow" />
@@ -165,24 +122,42 @@ export const TicketTable: React.FC = () => {
                       </Stat>
                     </Td>
                     <Td>
-                      {record.isWon == undefined ? (
-                        <Countdown targetDate={nextTime(record.pool.period)} />
-                      ) : record.isWon ? (
-                        <Button
-                          className="custom-button"
-                          // onClick={handleTransfer}
-                          // isLoading={isLoading || isPending}
-                        >
-                          Claim You Prize!
-                        </Button>
-                      ) : (
-                        <Icon
-                          as={record.isWon ? GiLaurelsTrophy : FaSadCry}
-                          w={8}
-                          h={8}
-                          color={record.isWon ? "yellow.300" : "red"}
-                        />
-                      )}
+                      <Box>
+                        {record.isWon == undefined ? (
+                          <Countdown targetDate={nextTime(record.pool.period)} />
+                        ) : record.isWon ? (
+                          <Flex>
+                            <Icon as={GiLaurelsTrophy} w={8} h={8} color="yellow.300" />
+                            &nbsp;{" "}
+                            {address &&
+                            record.result?.claimed &&
+                            record.result?.claimed[address] ? (
+                              <Link
+                                href={`${CHAIN_CONFIG[chain!.id].blockExplorer}/tx/${record.result
+                                  ?.claimed[address]}`}
+                                isExternal
+                              >
+                                <Tag>Claimed</Tag>
+                              </Link>
+                            ) : (
+                              <Button
+                                className="custom-button"
+                                onClick={() =>
+                                  handleTransfer.mutate({
+                                    address: address as string,
+                                    phase: record.currentPhase,
+                                  })
+                                }
+                                isLoading={handleTransfer.isLoading}
+                              >
+                                Claim You Prize
+                              </Button>
+                            )}
+                          </Flex>
+                        ) : (
+                          <Icon as={FaSadCry} w={8} h={8} color="red" />
+                        )}
+                      </Box>
                     </Td>
                   </Tr>
                 );

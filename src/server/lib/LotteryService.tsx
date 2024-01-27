@@ -2,6 +2,8 @@ import "server-only";
 import type Redis from "ioredis";
 import moment from "moment";
 import { nanoid } from "nanoid";
+import { createWalletClient, http, parseUnits } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 
 import { kvStore } from "@/server/lib/kv/Persistence";
 import type {
@@ -10,7 +12,7 @@ import type {
   ReferralInfo,
   TicketType,
 } from "@/server/lib/LotteryTypes";
-import InitPoolConfig from "@/server/lib/PoolConfig";
+import { InitPoolConfig, sepoliaBlast } from "@/server/lib/PoolConfig";
 
 class LotteryService {
   kv: Redis;
@@ -117,6 +119,45 @@ class LotteryService {
       } as PhaseResult),
     );
     return currentPhase;
+  }
+
+  async claimPrize(address: string, phase: string) {
+    const commander = this.kv.pipeline();
+    commander.hget(phase, ConstantField.PHASE_RESULT_FIELD, async (err, result) => {
+      if (err) {
+        console.error(err);
+      }
+      if (result) {
+        const phaseResult = JSON.parse(result) as PhaseResult;
+        const { hitAddr, poolCode, ticketCount, claimed } = phaseResult;
+        const { prop, wallet } = InitPoolConfig[poolCode];
+        const account = privateKeyToAccount(wallet as `0x${string}`);
+        if (hitAddr?.includes(address) && !(claimed && claimed[address])) {
+          const prize = (ticketCount * prop.price) / hitAddr?.length;
+          const walletClient = createWalletClient({
+            account,
+            chain: sepoliaBlast,
+            transport: http(),
+          });
+          const txHash = (await walletClient.sendTransaction({
+            to: address as `0x${string}`,
+            value: parseUnits(prize.toString(), sepoliaBlast.nativeCurrency.decimals),
+          })) as string;
+          await this.kv.hset(
+            phase,
+            ConstantField.PHASE_RESULT_FIELD,
+            JSON.stringify({
+              ...phaseResult,
+              claimed: { claimed, [address]: txHash },
+            }),
+          );
+          return txHash;
+        }
+      }
+      return undefined;
+    });
+    const result = await commander.exec();
+    return result && result[0] ? (result[0][1] as string) : undefined;
   }
 
   async createTicket(props: TicketType) {

@@ -9,7 +9,7 @@ import {
   type ResponseTPRC,
   type TicketType,
 } from "@/server/lib/LotteryTypes";
-import InitPoolConfig from "@/server/lib/PoolConfig";
+import { InitPoolConfig } from "@/server/lib/PoolConfig";
 
 export const userRouter = createTRPCRouter({
   signIn: publicProcedure
@@ -35,7 +35,6 @@ export const userRouter = createTRPCRouter({
         return { code: 500, message: "error" };
       }
     }),
-
   saveTickets: publicProcedure
     .input(
       z.object({
@@ -63,6 +62,17 @@ export const userRouter = createTRPCRouter({
           currentPhase: "No start",
         });
         return { code: 200, message: "OK", result: r };
+      } catch (error: unknown) {
+        console.log(error);
+        return { code: 500, message: "error" };
+      }
+    }),
+  claimPrize: publicProcedure
+    .input(z.object({ address: z.string(), phase: z.string() }))
+    .mutation(async ({ input }): Promise<ResponseTPRC> => {
+      try {
+        const txHash = await lottery.claimPrize(input.address, input.phase);
+        return { code: 200, message: "OK", result: txHash };
       } catch (error: unknown) {
         console.log(error);
         return { code: 500, message: "error" };

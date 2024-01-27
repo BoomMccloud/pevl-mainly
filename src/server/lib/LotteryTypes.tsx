@@ -46,10 +46,11 @@ type PhaseResult = {
   poolCode: string;
   currentPhase: string;
   ticketCount: number;
-  lotteryResult: string | undefined;
-  hitTx: string | undefined;
-  hitAddr: string[] | undefined;
-  hitTicket: string | undefined;
+  lotteryResult?: string;
+  hitTx?: string;
+  hitAddr?: string[];
+  hitTicket?: string;
+  claimed?: Record<string, string>;
 };
 
 type LotteryPointType = {

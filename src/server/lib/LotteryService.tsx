@@ -132,7 +132,11 @@ class LotteryService {
       }
       if (result) {
         //归入用户空间
-        commander.hsetnx(userNamespace, props.txHash, JSON.stringify({ ...props, currentPhase: result }));
+        commander.hsetnx(
+          userNamespace,
+          props.txHash,
+          JSON.stringify({ ...props, currentPhase: result }),
+        );
         //用户自积分
         commander.hincrby(userNamespace, ConstantField.USER_POINT_SUM_FIELD, ticketCount * 100);
         //归入期空间
@@ -159,35 +163,46 @@ class LotteryService {
           if (result) {
             const myRefNamespace = this.getUserNamespace(result as string);
             //推荐人积分
-            commander.hincrby(myRefNamespace, ConstantField.USER_REF_POINT_SUM_FIELD, ticketCount * 50);
+            commander.hincrby(
+              myRefNamespace,
+              ConstantField.USER_REF_POINT_SUM_FIELD,
+              ticketCount * 50,
+            );
             // 推荐人人的推荐人
-            commander.hget(myRefNamespace, ConstantField.USER_FROM_REF_CODE, async (err, result) => {
-              if (err) {
-                console.error(err);
-                return;
-              }
-              if (result) {
-                //推荐人转地址
-                commander.hget(ConstantKey.LOTTERY_REFERRAL_TO_USER, result, async (err, result) => {
-                  if (err) {
-                    console.error(err);
-                    return;
-                  }
-                  if (result) {
-                    const myRef2RefNamespace = this.getUserNamespace(result);
-                    //推荐人积分
-                    commander.hincrby(
-                      myRef2RefNamespace,
-                      ConstantField.USER_REF_POINT_SUM_FIELD,
-                      ticketCount * 25,
-                    );
-                    await commander.exec();
-                  }
-                });
-                await commander.exec();
-              }
-            });
-
+            commander.hget(
+              myRefNamespace,
+              ConstantField.USER_FROM_REF_CODE,
+              async (err, result) => {
+                if (err) {
+                  console.error(err);
+                  return;
+                }
+                if (result) {
+                  //推荐人转地址
+                  commander.hget(
+                    ConstantKey.LOTTERY_REFERRAL_TO_USER,
+                    result,
+                    async (err, result) => {
+                      if (err) {
+                        console.error(err);
+                        return;
+                      }
+                      if (result) {
+                        const myRef2RefNamespace = this.getUserNamespace(result);
+                        //推荐人积分
+                        commander.hincrby(
+                          myRef2RefNamespace,
+                          ConstantField.USER_REF_POINT_SUM_FIELD,
+                          ticketCount * 25,
+                        );
+                        await commander.exec();
+                      }
+                    },
+                  );
+                  await commander.exec();
+                }
+              },
+            );
           }
         });
       }
@@ -250,8 +265,10 @@ class LotteryService {
               const myRefNamespace = this.getUserNamespace(result);
               //推荐人
               commander.hincrby(myRefNamespace, ConstantField.USER_REF_TO_COUNT_FIELD, 1);
+              commander.exec();
             }
           });
+          commander.exec();
         }
       });
     }

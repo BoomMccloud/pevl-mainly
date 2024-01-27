@@ -22,6 +22,7 @@ import {
   Thead,
   Tr,
   Spinner,
+  Button,
 } from "@chakra-ui/react";
 import moment from "moment";
 import { FaSadCry } from "react-icons/fa";
@@ -166,6 +167,14 @@ export const TicketTable: React.FC = () => {
                     <Td>
                       {record.isWon == undefined ? (
                         <Countdown targetDate={nextTime(record.pool.period)} />
+                      ) : record.isWon ? (
+                        <Button
+                          className="custom-button"
+                          // onClick={handleTransfer}
+                          // isLoading={isLoading || isPending}
+                        >
+                          Claim You Prize!
+                        </Button>
                       ) : (
                         <Icon
                           as={record.isWon ? GiLaurelsTrophy : FaSadCry}

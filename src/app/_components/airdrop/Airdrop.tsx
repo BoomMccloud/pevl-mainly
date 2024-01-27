@@ -37,7 +37,7 @@ function Airdrop() {
         </Heading>
         <StatGroup mb={6}>
           <Stat>
-            <StatLabel>Your Points</StatLabel>
+            <StatLabel>Total Points</StatLabel>
             <StatNumber>{pointObj?.points ?? 0}</StatNumber>
           </Stat>
           <Stat>

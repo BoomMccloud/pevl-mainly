@@ -68,7 +68,7 @@ export const TicketTable: React.FC = () => {
                     isExternal
                   >
                     {" "}
-                    {getEllipsisTxt(data.result)}
+                    {getEllipsisTxt(data.result as `0x${string}`)}
                     <ExternalLinkIcon mx="2px" />
                   </Link>
                 </>

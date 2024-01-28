@@ -9,14 +9,26 @@ import { WagmiConfig } from "wagmi";
 import { Footer, Header } from "@/components";
 import { useWindowSize } from "@/hooks";
 import { chains, config } from "@/wagmi";
-
+import "@fontsource/orbitron";
 export function Providers({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const { isTablet } = useWindowSize();
 
   useEffect(() => setMounted(true), []);
 
-  const theme = extendTheme({ initialColorMode: "dark", useSystemColorMode: false });
+  const theme = extendTheme({
+    initialColorMode: "dark",
+    useSystemColorMode: false,
+    fonts: {
+      heading: `'Orbitron', sans-serif`,
+      body: `'Otbitron', sans-serif`,
+    },
+    colors: {
+      main: {
+        400: "#F8EF00",
+      },
+    },
+  });
 
   const appInfo = {
     appName: "PEVL",

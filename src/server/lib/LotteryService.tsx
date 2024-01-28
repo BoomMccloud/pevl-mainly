@@ -284,9 +284,10 @@ class LotteryService {
         }
         code = null;
       }
-    });
-
-    if (refCode) {
+      //防止自己推荐自己
+      if (!refCode || refCode == code) {
+        return;
+      }
       commander.hsetnx(userNamespace, ConstantField.USER_FROM_REF_CODE, refCode, (err, result) => {
         if (err) {
           console.log(err);
@@ -308,7 +309,8 @@ class LotteryService {
           commander.exec();
         }
       });
-    }
+      await commander.exec()
+    });
     const result = await commander.exec();
     console.log(result);
     return result && result[0] == null;

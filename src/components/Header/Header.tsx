@@ -11,6 +11,8 @@ import logo from "public/img/logo-with-text-transparent.svg";
 import { useSignIn } from "@/hooks/useSignIn";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
+import { DarkModeButton } from "../DarkModeButton";
+
 export const ticketPath = "/tickets";
 
 export const routes = [
@@ -79,7 +81,7 @@ const Header: FC = () => {
 
       <HStack>
         <ConnectButton />
-        {/* <DarkModeButton /> */}
+        <DarkModeButton />
       </HStack>
     </HStack>
   );

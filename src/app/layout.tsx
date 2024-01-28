@@ -4,10 +4,12 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import "@rainbow-me/rainbowkit/styles.css";
 import { cookies } from "next/headers";
-
+// eslint-disable-next-line import/order
+import { Orbitron } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 
 import { Providers } from "./providers";
+const orbitron = Orbitron({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "PEVL",
@@ -26,7 +28,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className={orbitron.className}>
         <TRPCReactProvider cookies={cookies().toString()}>
           <Providers>{children}</Providers>
         </TRPCReactProvider>

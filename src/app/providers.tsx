@@ -2,7 +2,7 @@
 import { type ReactNode, useState, useEffect } from "react";
 
 import { CacheProvider } from "@chakra-ui/next-js";
-import { extendTheme, ChakraProvider, Flex, Box } from "@chakra-ui/react";
+import { extendTheme, ChakraProvider, Flex, Box, DarkMode } from "@chakra-ui/react";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiConfig } from "wagmi";
 
@@ -23,9 +23,24 @@ export function Providers({ children }: { children: ReactNode }) {
       heading: `'Orbitron', sans-serif`,
       body: `'Otbitron', sans-serif`,
     },
+    global: {
+      // styles for the `body`
+      body: {
+        bg: "black",
+        color: "white",
+      },
+    },
     colors: {
-      main: {
+      brand: {
+        100: "#F8EF00",
+        200: "#F8EF00",
+        300: "#F8EF00",
         400: "#F8EF00",
+        500: "#F8EF00",
+        600: "#F8EF00",
+        700: "#F8EF00",
+        800: "#F8EF00",
+        900: "#F8EF00",
       },
     },
   });
@@ -37,23 +52,25 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <WagmiConfig config={config}>
       <CacheProvider>
-        <ChakraProvider resetCSS theme={theme}>
+        <ChakraProvider theme={theme}>
           <RainbowKitProvider coolMode chains={chains} appInfo={appInfo}>
-            {mounted && (
-              <Flex
-                flexDirection="column"
-                minHeight={isTablet ? "calc(100vh - 80px)" : "100vh"}
-                pb={20}
-              >
-                <Header />
+            <DarkMode>
+              {mounted && (
+                <Flex
+                  flexDirection="column"
+                  minHeight={isTablet ? "calc(100vh - 80px)" : "100vh"}
+                  pb={20}
+                >
+                  <Header />
 
-                <Box as="main" flex={1} p={4}>
-                  {children}
-                </Box>
+                  <Box as="main" flex={1} p={4}>
+                    {children}
+                  </Box>
 
-                {isTablet && <Footer />}
-              </Flex>
-            )}
+                  {isTablet && <Footer />}
+                </Flex>
+              )}
+            </DarkMode>
           </RainbowKitProvider>
         </ChakraProvider>
       </CacheProvider>

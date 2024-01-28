@@ -1,42 +1,42 @@
 .container {
-  --clip: 10px;
   height: auto;
   max-width: 900px;
   text-align: center;
   margin: auto;
   margin-top: 1rem;
   padding: 30px 12px;
+  /* box-shadow: 0px 0px 30px 30px rgba(148, 229, 35, 0.2); */
 
-  box-shadow: 0px 0px 30px 30px rgba(148, 229, 35, 0.2);
+  /* --clip: 10px;
   background-color: #181811;
   clip-path: polygon(
-    /* top left */ 0% var(--clip),
+    0% var(--clip),
     var(--clip) 0%,
 
-    /* top clip */ 60% 0%,
+    60% 0%,
     62% var(--clip),
     78% var(--clip),
     80% 0%,
-    /* top right */ calc(100% - var(--clip)) 0%,
+    calc(100% - var(--clip)) 0%,
     100% var(--clip),
-    /* right clip */ 100% 60%,
+    100% 60%,
     calc(100% - var(--clip)) 62%,
     calc(100% - var(--clip)) 78%,
     100% 80%,
-    /* bottom right */ 100% calc(100% - var(--clip)),
+    100% calc(100% - var(--clip)),
     calc(100% - var(--clip)) 100%,
 
-    /* bottom clip */ 40% 100%,
+    40% 100%,
     38% calc(100% - var(--clip)),
     22% calc(100% - var(--clip)),
     20% 100%,
-    /* bottom left */ var(--clip) 100%,
+    var(--clip) 100%,
     0% calc(100% - var(--clip)),
-    /* left clip */ 0% 40%,
+    0% 40%,
     var(--clip) 38%,
     var(--clip) 22%,
     0% 20%
-  );
+  ); */
 }
 
 .content {

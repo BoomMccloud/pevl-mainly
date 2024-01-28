@@ -2,7 +2,7 @@
 
 import { type FC } from "react";
 
-import { Box, Divider, Flex, Heading, useColorMode } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
 import LotteryMain from "@/app/_components/LotteryMain";
@@ -10,13 +10,9 @@ import styles from "@/styles/mainPane.module.css";
 
 const Debugger: FC = () => {
   const { isConnected } = useAccount();
-  const { colorMode } = useColorMode();
 
   return (
-    <Box
-      className={styles.container}
-      border={colorMode === "light" ? "none" : "1px solid rgba(152, 161, 192, 0.24)"}
-    >
+    <Box className={styles.container}>
       <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
         Display Info
       </Heading>

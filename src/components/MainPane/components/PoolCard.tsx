@@ -4,8 +4,6 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  Card,
-  CardBody,
   Heading,
   HStack,
   Input,
@@ -24,6 +22,7 @@ import { parseEther } from "viem";
 import { useAccount, useNetwork, useSendTransaction, useWaitForTransaction } from "wagmi";
 
 import { nextTime } from "@/app/_util/util";
+import { Container } from "@/components/Container";
 import { ticketPath } from "@/components/Header/Header";
 import { CHAIN_CONFIG, FUND_WALLET_ADDRESS } from "@/const";
 import { useNotify } from "@/hooks";
@@ -121,44 +120,43 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
     }
   }, [receipt, isError, error]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Card>
-      <CardBody>
-        <Stack mt="6" spacing="3" alignItems="stretch">
-          <HStack justifyContent="center">
-            <Heading size="md">{name}</Heading>
-          </HStack>
+    <Container>
+      <Stack mt="6" spacing="3" alignItems="stretch">
+        <HStack justifyContent="center">
+          <Heading size="md">{name}</Heading>
+        </HStack>
 
-          <Heading as="h2" fontSize={"2rem"} mb={3}>
-            Prize: {((currentPhase?.ticketCount ?? 0) * price).toFixed(3)} ETH
-          </Heading>
-          <Countdown
-            date={nextTime(period)}
-            zeroPadTime={2}
-            renderer={({ hours, minutes, completed }) => {
-              if (completed) {
-                // Render a completed state
-                return <span>Round Ended, go to ... to check if you win this round</span>;
-              } else {
-                // Render a countdown
-                return (
-                  <HStack justifyContent="center">
-                    <VStack gap={0}>
-                      <Heading as="h1" style={{ fontSize: 24 }}>
-                        {zeroPad(hours)}
-                      </Heading>
-                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
-                        HRS
-                      </Text>
-                    </VStack>
-                    <VStack gap={0}>
-                      <Heading as="h1" style={{ fontSize: 24 }}>
-                        {zeroPad(minutes)}
-                      </Heading>
-                      <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
-                        MINS
-                      </Text>
-                    </VStack>
-                    {/* <VStack gap={0}>
+        <Heading as="h2" fontSize={"2rem"} mb={3}>
+          Prize: {((currentPhase?.ticketCount ?? 0) * price).toFixed(3)} ETH
+        </Heading>
+        <Countdown
+          date={nextTime(period)}
+          zeroPadTime={2}
+          renderer={({ hours, minutes, completed }) => {
+            if (completed) {
+              // Render a completed state
+              return <span>Round Ended, go to ... to check if you win this round</span>;
+            } else {
+              // Render a countdown
+              return (
+                <HStack justifyContent="center">
+                  <VStack gap={0}>
+                    <Heading as="h1" style={{ fontSize: 24 }}>
+                      {zeroPad(hours)}
+                    </Heading>
+                    <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                      HRS
+                    </Text>
+                  </VStack>
+                  <VStack gap={0}>
+                    <Heading as="h1" style={{ fontSize: 24 }}>
+                      {zeroPad(minutes)}
+                    </Heading>
+                    <Text color="grey" as="h6" style={{ fontSize: 16, fontWeight: 500 }}>
+                      MINS
+                    </Text>
+                  </VStack>
+                  {/* <VStack gap={0}>
                       <Heading as="h1" style={{ fontSize: 24 }}>
                         {zeroPad(seconds)}
                       </Heading>
@@ -166,46 +164,45 @@ export const PoolCard = ({ pool, currentPhase }: PoolStateType) => {
                         SECS
                       </Text>
                     </VStack> */}
-                  </HStack>
-                );
-              }
-            }}
-          ></Countdown>
+                </HStack>
+              );
+            }
+          }}
+        ></Countdown>
 
-          <Text>Number of Tickets</Text>
+        <Text>Number of Tickets</Text>
 
-          <HStack mb={2}>
-            <Button {...dec}>-</Button>
-            <Input {...input} style={{ textAlign: "center" }} />
-            <Button className="custom-button" {...inc}>
-              +
-            </Button>
+        <HStack mb={2}>
+          <Button {...dec}>-</Button>
+          <Input {...input} style={{ textAlign: "center" }} />
+          <Button className="custom-button" {...inc}>
+            +
+          </Button>
+        </HStack>
+        <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
+
+        <HStack justifyContent="center">
+          <Text>Expected Value {(price * Number(ticketAmount)).toFixed(4)} ETH + </Text>
+          <HStack gap={0}>
+            <Text>{Number(ticketAmount) * 100}</Text>
+            <Image src={logo.src} alt="logo" width={20} height={20} />
+            <Text> points</Text>
           </HStack>
-          <Text>Price {(price * Number(ticketAmount)).toFixed(4)} ETH</Text>
-
-          <HStack justifyContent="center">
-            <Text>Expected Value {(price * Number(ticketAmount)).toFixed(4)} ETH + </Text>
-            <HStack gap={0}>
-              <Text>{Number(ticketAmount) * 100}</Text>
-              <Image src={logo.src} alt="logo" width={20} height={20} />
-              <Text> points</Text>
-            </HStack>
-          </HStack>
-          {isConnected ? (
-            <Button
-              className="custom-button"
-              onClick={handleTransfer}
-              isLoading={isLoading || isPending}
-            >
-              Enter The Drawing!
-            </Button>
-          ) : (
-            <Box display="flex" justifyContent="center">
-              <ConnectButton />
-            </Box>
-          )}
-        </Stack>
-      </CardBody>
-    </Card>
+        </HStack>
+        {isConnected ? (
+          <Button
+            className="custom-button"
+            onClick={handleTransfer}
+            isLoading={isLoading || isPending}
+          >
+            Enter The Drawing!
+          </Button>
+        ) : (
+          <Box display="flex" justifyContent="center">
+            <ConnectButton />
+          </Box>
+        )}
+      </Stack>
+    </Container>
   );
 };

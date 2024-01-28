@@ -92,7 +92,7 @@ export const TicketTable: React.FC = () => {
     <>
       {isLoading ? (
         <Box display="flex" justifyContent="center" alignItems="center" height="300px">
-          <Spinner color="yellow" />
+          <Spinner color="#F8EF00" />
         </Box>
       ) : (
         <TableContainer>
@@ -147,7 +147,7 @@ export const TicketTable: React.FC = () => {
                           <Countdown targetDate={nextTime(record.pool.period)} />
                         ) : record.isWon ? (
                           <Flex>
-                            <Icon as={GiLaurelsTrophy} w={8} h={8} color="yellow.300" />
+                            <Icon as={GiLaurelsTrophy} w={8} h={8} color="#F8EF00" />
                             &nbsp;{" "}
                             {address &&
                             record.result?.claimed &&

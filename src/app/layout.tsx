@@ -2,17 +2,14 @@ import React, { type ReactNode } from "react";
 
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-// eslint-disable-next-line import/order
-import { Open_Sans } from "next/font/google";
-
 import "@rainbow-me/rainbowkit/styles.css";
 import { cookies } from "next/headers";
-
+// eslint-disable-next-line import/order
+import { Orbitron } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 
 import { Providers } from "./providers";
-
-const open_sans = Open_Sans({ subsets: ["latin"] });
+const orbitron = Orbitron({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "PEVL",
@@ -31,7 +28,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={open_sans.className}>
+      <body className={orbitron.className}>
         <TRPCReactProvider cookies={cookies().toString()}>
           <Providers>{children}</Providers>
         </TRPCReactProvider>

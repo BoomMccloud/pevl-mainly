@@ -12,7 +12,7 @@ const MainPane: FC = () => {
   return (
     <Box className={styles.container}>
       <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
-        Try your luck with our 100% fair raffle!
+        Play our 100% payout raffle!!
       </Heading>
       <Center>
         <BuyTicket />
